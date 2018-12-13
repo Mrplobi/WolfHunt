@@ -1,2 +1,2 @@
 # WolfHunt
-Small IA automatic system that plays the "werewolves" game
+Small AI automatic system that plays the "werewolves" game
