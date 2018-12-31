@@ -127,7 +127,7 @@ public class MJAgent
                 // create a new agent
 		String localName = "player"+i;
 		System.out.println("werewolf created");
-		AgentController guest = container.createNewAgent(localName, " package WerewolfGame.People", null);
+		AgentController guest = container.createNewAgent(localName, "WolfHunt.People", null);
 		guest.start();
 
                 // keep the guest's ID on a local list
@@ -135,9 +135,9 @@ public class MJAgent
             }
 			for (int i = 0;  i < nVillagers;  i++) {
                 // create a new agent
-		String localName = "player"+i;
+		String localName = "playerVillager"+i;
 		System.out.println("villager created");
-		AgentController guest = container.createNewAgent(localName, " package WolfHunt.People", null);
+		AgentController guest = container.createNewAgent(localName, "WolfHunt.People", null);
 		guest.start();
 
                 // keep the guest's ID on a local list
