@@ -36,9 +36,11 @@ public class MJAgent
 	protected long m_startTime = 0;
    
 
-    public static final String HELLOWEREWOLF= "MEBEWEREWOLF";
-    public static final String HELLOVILLAGER= "MEBEPOORVILLAGER";
-    public static final String GOODBYE= "Bye";
+    public static final String HELLOWEREWOLF = "MEBEWEREWOLF";
+    public static final String HELLOVILLAGER = "MEBEPOORVILLAGER";
+    public static final String GOODBYE = "Bye";
+	public static final String NIGHTTIME= "Night";
+	public static final String DAYTIME= "Day";
 	
 	
 	public MJAgent()
@@ -81,6 +83,15 @@ public class MJAgent
 									{
                                         System.out.println( "The night has set down, everybody close their eyes in JIN(X)City" );
                                         // all guests have arrived
+										for (Iterator i = players.iterator();  i.hasNext();  ) 
+										{
+											ACLMessage msgSent = new ACLMessage( ACLMessage.INFORM );
+											msgSent.setContent( NIGHTTIME );
+
+											msgSent.addReceiver( (AID) i.next() );
+
+											send(msgSent);
+        }
 
                                     }
                                    
@@ -125,7 +136,7 @@ public class MJAgent
         try {
             for (int i = 0;  i < nWerewolves;  i++) {
                 // create a new agent
-		String localName = "player"+i;
+		String localName = "playerWerewolf"+i;
 		System.out.println("werewolf created");
 		AgentController guest = container.createNewAgent(localName, "WolfHunt.People", null);
 		guest.start();

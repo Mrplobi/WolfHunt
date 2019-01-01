@@ -13,11 +13,15 @@ import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.DFService;
 
+import javax.swing.*;
+import java.util.*;
+import java.text.NumberFormat;
+
 
 public class People
     extends Agent
 {
-
+protected ArrayList players ; 
     /**
      * Set up the agent. Register with the DF, and add a behaviour to process
      * incoming messages.  Also sends a message to the host to say that this
@@ -25,6 +29,7 @@ public class People
      */
     protected void setup() {
         try {
+			players = new ArrayList();
             // create the agent descrption of itself
             ServiceDescription sd = new ServiceDescription();
             sd.setType( "WerewolfPlayer" );
@@ -50,15 +55,33 @@ public class People
                                 ACLMessage msg = receive( MessageTemplate.MatchPerformative( ACLMessage.INFORM ) );
 
                                 if (msg != null) {
-/*                                    if (HostAgent.GOODBYE.equals( msg.getContent() )) {
+                                    if (MJAgent.GOODBYE.equals( msg.getContent() )) 
+									{
                                         // time to go
                                         leaveParty();
                                     }
-                                    else if (msg.getContent().startsWith( HostAgent.INTRODUCE )) {
-                                        // I am being introduced to another guest
-                                        introducing( msg.getContent().substring( msg.getContent().indexOf( " " ) ) );
-                                    }
-                                    else if (msg.getContent().startsWith( HostAgent.HELLO )) {
+                                    else if (msg.getContent().startsWith( MJAgent.NIGHTTIME )) 
+									{
+										System.out.println("Me "+ getLocalName() + "be sleepy");
+                                        if(players.size() == 0)//La première fois que tout le monde arrive on récupère les autres joueurs
+										{
+											try	
+											{
+												dfd.setName(null);
+												DFAgentDescription[] result = DFService.search(myAgent, dfd);
+												for (int i = 0; i < result.length; ++i) 
+												{
+													players.add(result[i].getName());
+												}
+												System.out.println(players.size());
+											}
+											catch(FIPAException fe) {
+												fe.printStackTrace();
+												}
+// Perform the request
+										}
+									}
+/*                                    else if (msg.getContent().startsWith( HostAgent.HELLO )) {
                                         // someone saying hello
                                         passRumour( msg.getSender() );
                                     }
