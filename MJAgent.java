@@ -21,32 +21,56 @@ import jade.domain.FIPAException;
 import javax.swing.*;
 import java.util.*;
 import java.text.NumberFormat;
+
 /** Note: to start the host agent, it must be named 'MJ'.  Thus:
  * <code><pre>
  *     java jade.Boot MJ:WolfHunt.MJAgent()
  * </pre></code>
  * </p>
  **/
-public class MJAgent
+
+ public class MJAgent
     extends Agent
 {
 	protected ArrayList players = new ArrayList();    // invitees
-    protected int playersNumber = 0;                 // arrivals
+    protected int playersNumber = 0;              // arrivals
+    protected int acksNumber = 0;              // arrivals
 	protected boolean isGameOver = true ;
 	protected long m_startTime = 0;
    
 
     public static final String HELLOWEREWOLF = "MEBEWEREWOLF";
     public static final String HELLOVILLAGER = "MEBEPOORVILLAGER";
+    public static final String ACK = "ACK";
     public static final String GOODBYE = "Bye";
 	public static final String NIGHTTIME= "Night";
 	public static final String DAYTIME= "Day";
-	
+	public static final String VOTETIME= "vote";
+	public static final String WAKEWEREWOLVES= "WakeWerewolves";
+	public HashMap<State, String> messageToSend;
+	public State currentState = State.NIGHTTIME;
 	
 	public MJAgent()
 	{
-		
+		messageToSend=new HashMap<State,String>();
+		messageToSend.put(State.NIGHTTIME,NIGHTTIME);
+		messageToSend.put(State.WEREWOLF,WAKEWEREWOLVES);
+		messageToSend.put(State.DAYTIME,DAYTIME);
+		messageToSend.put(State.VOTETIME,VOTETIME);
     }
+	public void sendState()
+	{
+		
+		for (Iterator i = players.iterator();  i.hasNext();  ) 
+		{
+			ACLMessage msgSent = new ACLMessage( ACLMessage.INFORM );
+			msgSent.setContent( messageToSend.get(currentState) );
+
+			msgSent.addReceiver( (AID) i.next() );
+			send(msgSent);
+										
+		}
+	}
 	  /**
      * Setup the agent.  Registers with the DF, and adds a behaviour to
      * process incoming messages.
@@ -70,31 +94,33 @@ public class MJAgent
 									{
                                         // a guest has arrived
                                         playersNumber++;
-										System.out.println("the werewolf" + players + "arrived. Have a nice hunt! ");
+										System.out.println("the werewolf" + getLocalName() + "arrived. Have a nice hunt! ");
 									}
 									else if(HELLOVILLAGER.equals(msg.getContent())) 
 									{
                                         // a guest has arrived
                                         playersNumber++;
-										System.out.println("the villager" +  players + "arrived. Have a nice taste! ");
+										System.out.println("the villager" +  getLocalName() + "arrived. Have a nice taste! ");
 									}
-
+									else if(ACK.equals(msg.getContent())) 
+									{
+                                        // a ack was received
+                                        acksNumber++;
+										
+									}
                                     if ( playersNumber == players.size()) 
 									{
                                         System.out.println( "The night has set down, everybody close their eyes in JIN(X)City" );
                                         // all guests have arrived
-										for (Iterator i = players.iterator();  i.hasNext();  ) 
-										{
-											ACLMessage msgSent = new ACLMessage( ACLMessage.INFORM );
-											msgSent.setContent( NIGHTTIME );
-
-											msgSent.addReceiver( (AID) i.next() );
-
-											send(msgSent);
-        }
-
+										currentState=State.NIGHTTIME;
+										sendState();
                                     }
-                                   
+									if(acksNumber == players.size())
+									{
+										acksNumber=0;
+										currentState = currentState.next();
+										sendState();
+									}
                                 }
                                 else {
                                     // if no message is arrived, block the behaviour
@@ -138,7 +164,7 @@ public class MJAgent
                 // create a new agent
 		String localName = "playerWerewolf"+i;
 		System.out.println("werewolf created");
-		AgentController guest = container.createNewAgent(localName, "WolfHunt.People", null);
+		AgentController guest = container.createNewAgent(localName, "WolfHunt.Werewolf", null);
 		guest.start();
 
                 // keep the guest's ID on a local list
@@ -148,7 +174,7 @@ public class MJAgent
                 // create a new agent
 		String localName = "playerVillager"+i;
 		System.out.println("villager created");
-		AgentController guest = container.createNewAgent(localName, "WolfHunt.People", null);
+		AgentController guest = container.createNewAgent(localName, "WolfHunt.Villager", null);
 		guest.start();
 
                 // keep the guest's ID on a local list

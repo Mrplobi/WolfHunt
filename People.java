@@ -22,31 +22,19 @@ public class People
     extends Agent
 {
 protected ArrayList players ; 
+protected boolean awake;
+public BehaviourType behaviourType;
+public AID MJ;
     /**
      * Set up the agent. Register with the DF, and add a behaviour to process
      * incoming messages.  Also sends a message to the host to say that this
      * guest has arrived.
      */
+
     protected void setup() {
         try {
 			players = new ArrayList();
-            // create the agent descrption of itself
-            ServiceDescription sd = new ServiceDescription();
-            sd.setType( "WerewolfPlayer" );
-            sd.setName( "GuestServiceDescription" );
-            DFAgentDescription dfd = new DFAgentDescription();
-            dfd.setName( getAID() );
-            dfd.addServices( sd );
-
-            // register the description with the DF
-            DFService.register( this, dfd );
-
-            // notify the host that we have arrived
-            ACLMessage hello = new ACLMessage( ACLMessage.INFORM );
-            hello.setContent( MJAgent.HELLOWEREWOLF );
-            hello.addReceiver( new AID( "MJ", AID.ISLOCALNAME ) );
-            send( hello );
-
+						//=============== 
             // add a Behaviour to process incoming messages
             addBehaviour( new CyclicBehaviour( this ) 
 			{
@@ -63,11 +51,16 @@ protected ArrayList players ;
                                     else if (msg.getContent().startsWith( MJAgent.NIGHTTIME )) 
 									{
 										System.out.println("Me "+ getLocalName() + "be sleepy");
+										awake=false;
                                         if(players.size() == 0)//La première fois que tout le monde arrive on récupère les autres joueurs
 										{
 											try	
 											{
-												dfd.setName(null);
+												 ServiceDescription sd = new ServiceDescription();
+												sd.setType( "WerewolfPlayer" );
+												DFAgentDescription dfd = new DFAgentDescription();
+												dfd.addServices( sd );
+
 												DFAgentDescription[] result = DFService.search(myAgent, dfd);
 												for (int i = 0; i < result.length; ++i) 
 												{
@@ -80,7 +73,10 @@ protected ArrayList players ;
 												}
 // Perform the request
 										}
+										
 									}
+//TODO GERER MIEUX LE ACK
+									//									ack(msg);
 /*                                    else if (msg.getContent().startsWith( HostAgent.HELLO )) {
                                         // someone saying hello
                                         passRumour( msg.getSender() );
@@ -92,7 +88,7 @@ protected ArrayList players ;
                                     else {
                                         System.out.println( "Guest received unexpected message: " + msg );
                                     }
- */                             System.out.println("Got somethin received in people");
+ */          //                   System.out.println("Got somethin received in people");
 									}
                                 else {
                                     // if no message is arrived, block the behaviour
@@ -107,7 +103,15 @@ protected ArrayList players ;
         }
 
     }
-
+	protected void ack(ACLMessage msg)
+	{
+			System.out.println( getLocalName() + "said ACK ");
+									
+			ACLMessage msgSent = new ACLMessage( ACLMessage.INFORM );
+			msgSent.setContent( MJAgent.ACK );
+			msgSent.addReceiver( msg.getSender() );
+			send(msgSent);
+	}
 
     // Internal implementation methods
     //////////////////////////////////
