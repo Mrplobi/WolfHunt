@@ -26,6 +26,7 @@ public class People
 	private behaviours behaviour;
 	public BehaviourType behaviourType;
 	public AID MJ;
+	public State currentState;
     /**
      * Set up the agent. Register with the DF, and add a behaviour to process
      * incoming messages.  Also sends a message to the host to say that this
@@ -51,6 +52,7 @@ public class People
                                     }
                                     else if (msg.getContent().startsWith( MJAgent.NIGHTTIME )) 
 									{
+										currentState = NIGHTTIME;
 										System.out.println("Me "+ getLocalName() + "be sleepy");
 										awake=false;
                                         if(players.size() == 0)//La première fois que tout le monde arrive on récupère les autres joueurs
@@ -78,13 +80,11 @@ public class People
 									}
 									else if (msg.getcontent().startsWith(MJAgent.VOTETIME))
 									{
+										currentState = VOTETIME;
 										if(this.behaviour = behaviours.meneur)
 										{
 											//pick player au hasard et start spread rumeur
-										}
-										if(this.behaviour = behaviours.suiveur)
-										{
-											//
+											
 										}
 									}
 //TODO GERER MIEUX LE ACK
