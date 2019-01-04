@@ -20,6 +20,7 @@ import java.text.NumberFormat;
 
 public abstract class BehaviourType
 {
+	public enum behaviours{meneur, suiveur}
 	public abstract void morningVote();
 	public abstract void werewolfVote();
 }

@@ -20,33 +20,33 @@ import java.text.NumberFormat;
 
 public class Werewolf extends People
 {
-	  protected void setup()
-	  {
-		  MJ=new AID( "MJ", AID.ISLOCALNAME );
+  protected void setup()
+  {
+	  MJ=new AID( "MJ", AID.ISLOCALNAME );
 
-		  // create the agent descrption of itself
-			try
-			{			
-		    ServiceDescription sd = new ServiceDescription();
-            sd.setType( "WerewolfPlayer" );
-            sd.setName( "Werewolf" );
-            DFAgentDescription dfd = new DFAgentDescription();
-            dfd.setName( getAID() );
-            dfd.addServices( sd );
+	  // create the agent descrption of itself
+		try
+		{			
+		ServiceDescription sd = new ServiceDescription();
+		sd.setType( "WerewolfPlayer" );
+		sd.setName( "Werewolf" );
+		DFAgentDescription dfd = new DFAgentDescription();
+		dfd.setName( getAID() );
+		dfd.addServices( sd );
 
-            // register the description with the DF
-            DFService.register( this, dfd );
+		// register the description with the DF
+		DFService.register( this, dfd );
 
-            // notify the host that we have arrived
-            ACLMessage hello = new ACLMessage( ACLMessage.INFORM );
-            hello.setContent( MJAgent.HELLOWEREWOLF );
-            hello.addReceiver( MJ );
-            send( hello );
-			}
-			catch(Exception e)
-			{
-				e.printStackTrace();
-			}
-		super.setup();
-	  }
+		// notify the host that we have arrived
+		ACLMessage hello = new ACLMessage( ACLMessage.INFORM );
+		hello.setContent( MJAgent.HELLOWEREWOLF );
+		hello.addReceiver( MJ );
+		send( hello );
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+	super.setup();
+  }
 }

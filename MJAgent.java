@@ -68,7 +68,6 @@ import java.text.NumberFormat;
 
 			msgSent.addReceiver( (AID) i.next() );
 			send(msgSent);
-										
 		}
 	}
 	  /**
@@ -115,7 +114,7 @@ import java.text.NumberFormat;
 										currentState=State.NIGHTTIME;
 										sendState();
                                     }
-									if(acksNumber == players.size())
+									if(acksNumber == players.size())	
 									{
 										acksNumber=0;
 										currentState = currentState.next();
@@ -162,20 +161,20 @@ import java.text.NumberFormat;
         try {
             for (int i = 0;  i < nWerewolves;  i++) {
                 // create a new agent
-		String localName = "playerWerewolf"+i;
-		System.out.println("werewolf created");
-		AgentController guest = container.createNewAgent(localName, "WolfHunt.Werewolf", null);
-		guest.start();
+				String localName = "playerWerewolf"+i;
+				System.out.println("werewolf created");
+				AgentController guest = container.createNewAgent(localName, "WolfHunt.Werewolf", null);
+				guest.start();
 
-                // keep the guest's ID on a local list
-                players.add( new AID(localName, AID.ISLOCALNAME) );
+				// keep the guest's ID on a local list
+				players.add( new AID(localName, AID.ISLOCALNAME) );
             }
 			for (int i = 0;  i < nVillagers;  i++) {
                 // create a new agent
-		String localName = "playerVillager"+i;
-		System.out.println("villager created");
-		AgentController guest = container.createNewAgent(localName, "WolfHunt.Villager", null);
-		guest.start();
+				String localName = "playerVillager"+i;
+				System.out.println("villager created");
+				AgentController guest = container.createNewAgent(localName, "WolfHunt.Villager", null);
+				guest.start();
 
                 // keep the guest's ID on a local list
                 players.add( new AID(localName, AID.ISLOCALNAME) );

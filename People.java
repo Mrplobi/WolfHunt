@@ -21,10 +21,11 @@ import java.text.NumberFormat;
 public class People
     extends Agent
 {
-protected ArrayList players ; 
-protected boolean awake;
-public BehaviourType behaviourType;
-public AID MJ;
+	protected ArrayList players ; 
+	protected boolean awake;
+	private behaviours behaviour;
+	public BehaviourType behaviourType;
+	public AID MJ;
     /**
      * Set up the agent. Register with the DF, and add a behaviour to process
      * incoming messages.  Also sends a message to the host to say that this
@@ -56,7 +57,7 @@ public AID MJ;
 										{
 											try	
 											{
-												 ServiceDescription sd = new ServiceDescription();
+												ServiceDescription sd = new ServiceDescription();
 												sd.setType( "WerewolfPlayer" );
 												DFAgentDescription dfd = new DFAgentDescription();
 												dfd.addServices( sd );
@@ -70,10 +71,21 @@ public AID MJ;
 											}
 											catch(FIPAException fe) {
 												fe.printStackTrace();
-												}
+											}
 // Perform the request
 										}
 										
+									}
+									else if (msg.getcontent().startsWith(MJAgent.VOTETIME))
+									{
+										if(this.behaviour = behaviours.meneur)
+										{
+											//pick player au hasard et start spread rumeur
+										}
+										if(this.behaviour = behaviours.suiveur)
+										{
+											//
+										}
 									}
 //TODO GERER MIEUX LE ACK
 									//									ack(msg);
