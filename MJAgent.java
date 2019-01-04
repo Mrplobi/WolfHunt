@@ -152,7 +152,7 @@ import java.text.NumberFormat;
     protected void startGame()
 	{
 		int nWerewolves = 3;
-		int nVillagers = 5;
+		int nVillagers = 6;
 		int nLittlegirl = 1;
         // remove any old state
         players.clear();
@@ -189,10 +189,10 @@ import java.text.NumberFormat;
             }
 			for (int i = 0; i < nLittlegirl; i++) {
 				//create new agent
-		String localName = "playerLittleGirl"+i;
-		System.out.println("little girl created");
-		AgentController guest = container.createNewAgent(localName, "WolfHunt.LittleGirl", null);
-		guest.start();
+				String localName = "playerLittleGirl"+i;
+				System.out.println("little girl created");
+				AgentController guest = container.createNewAgent(localName, "WolfHunt.LittleGirl", null);
+				guest.start();
 
                 // keep the guest's ID on a local list
                 players.add( new AID(localName, AID.ISLOCALNAME) );

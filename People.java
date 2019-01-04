@@ -17,16 +17,54 @@ import javax.swing.*;
 import java.util.*;
 import java.text.NumberFormat;
 
+import java.lang.Math;
+
+import java.util.Random;
+
+/**
+ * Returns a pseudo-random number between min and max, inclusive.
+ * The difference between min and max can be at most
+ * <code>Integer.MAX_VALUE - 1</code>.
+ *
+ * @param min Minimum value
+ * @param max Maximum value.  Must be greater than min.
+ * @return Integer between min and max, inclusive.
+ * @see java.util.Random#nextInt(int)
+ */
+public static int randInt(int min, int max) {
+
+    // NOTE: This will (intentionally) not run as written so that folks
+    // copy-pasting have to think about how to initialize their
+    // Random instance.  Initialization of the Random instance is outside
+    // the main scope of the question, but some decent options are to have
+    // a field that is initialized once and then re-used as needed or to
+    // use ThreadLocalRandom (if using at least Java 1.7).
+    // 
+    // In particular, do NOT do 'Random rand = new Random()' here or you
+    // will get not very good / not very random results.
+    Random rand;
+
+    // nextInt is normally exclusive of the top value,
+    // so add 1 to make it inclusive
+    int randomNum = rand.nextInt((max - min) + 1) + min;
+
+    return randomNum;
+}
 
 public class People
     extends Agent
 {
 	protected ArrayList players ; 
 	protected boolean awake;
-	private behaviours behaviour;
+	protected behaviours behaviour;
 	public BehaviourType behaviourType;
 	public AID MJ;
 	public State currentState;
+	protected String suspect;                       //Name of the current highest suspect
+	protected ArrayList trustyLivingPlayers;
+	
+	
+	
     /**
      * Set up the agent. Register with the DF, and add a behaviour to process
      * incoming messages.  Also sends a message to the host to say that this
@@ -68,8 +106,12 @@ public class People
 												for (int i = 0; i < result.length; ++i) 
 												{
 													players.add(result[i].getName());
+													if (result[i].getName() != getLocalName()){		//CHECK THIS
+														livingPlayers.add(result[i].getName());   
+													}
 												}
 												System.out.println(players.size());
+												System.out.println(livingPlayers.size());
 											}
 											catch(FIPAException fe) {
 												fe.printStackTrace();
@@ -84,9 +126,42 @@ public class People
 										if(this.behaviour = behaviours.meneur)
 										{
 											//pick player au hasard et start spread rumeur
-											
+											if (suspect == null)
+											{
+												suspect = otherLivingPlayers[randInt(0, 9)];
+											}
+											SendAccusation(suspect, otherLivingPlayers);
 										}
 									}
+									else if (currentState == VOTETIME && players.contains(msg.getcontent()){
+										if (msg.getContent() == getLocalName())
+										{
+											trustyLivingPlayers.remove(msg.getSender().getName());
+											SendAccusation(msg.getSender().getName(), trustyLivingPlayers);
+										}
+										else if (behaviour == suiveur)									//Le suiveur se fait convaincre à chaque fois et transmet l'info (une vrai girouette ce suiveur)
+										{
+											suspect = msg.getContent();
+											SendAccusation(suspect, trustyLivingPlayers);
+										}
+										else if (behaviour = meneur)
+										{
+											if ( !trustyLivingPlayers.contains(msg.getContent()){						//Le meneur était déjà sur cette piste un peu, change donc de suspect et répend la cible
+												suspect = msg.getContent();
+												SendAccusation(suspect, trustyLivingPlayers);
+											}
+											else if(randInt(0, 9) < 2)				//Le meneur est convaincu, change de cible et transmet
+											{
+												trustyLivingPlayers.remove(msg.getContent());
+												suspect = msg.getContent();
+												SendAccusation(suspect, trustyLivingPlayers);
+											}
+											else{									//Le meneur n'est pas convaincu, il répend donc sa théorie et pas celle qui lui arrive
+												SendAccusation(suspect, trustyLivingPlayers);
+											}
+										}
+									}
+									
 //TODO GERER MIEUX LE ACK
 									//									ack(msg);
 /*                                    else if (msg.getContent().startsWith( HostAgent.HELLO )) {
@@ -115,10 +190,33 @@ public class People
         }
 
     }
+	
+	//Method sending a message to a random trusted player
+	
+	protected void SendAccusation(String suspect, ArrayList possibleReceivers)   //CHECK THIS method especially the types of the objects
+	{
+		People receiver = possibleReceivers[randInt(0, possibleReceivers.size()];
+		System.out.println( getLocalName() + " accused " + suspect.getName() + " in front of " + receiver.getName());
+		ACLMessage accusation = new ACLMessage( ACLMessage.INFORM );
+		accusation.setContent( suspect );
+		accusation.addReceiver( receiver.getAID() );
+		send(accusation);
+	}
+	
+	//sends vote to MJ using MJagent as receiver
+	
+	protected void CastVote(String suspect)
+	{
+		System.out.println( getLocalName() + " voted for " + suspect.getName());
+		ACLMessage vote = new ACLMessage( ACLMessage.INFORM );
+		vote.setContent( suspect );
+		vote.addReceiver( MJAgent );
+		send(vote);
+	}
+	
 	protected void ack(ACLMessage msg)
 	{
 			System.out.println( getLocalName() + "said ACK ");
-									
 			ACLMessage msgSent = new ACLMessage( ACLMessage.INFORM );
 			msgSent.setContent( MJAgent.ACK );
 			msgSent.addReceiver( msg.getSender() );
