@@ -41,6 +41,7 @@ import java.text.NumberFormat;
 
     public static final String HELLOWEREWOLF = "MEBEWEREWOLF";
     public static final String HELLOVILLAGER = "MEBEPOORVILLAGER";
+	public static final String HELLOLITTLEGIRL = "MEBEPOORLITTLEGIRL";
     public static final String ACK = "ACK";
     public static final String GOODBYE = "Bye";
 	public static final String NIGHTTIME= "Night";
@@ -101,6 +102,12 @@ import java.text.NumberFormat;
                                         playersNumber++;
 										System.out.println("the villager" +  getLocalName() + "arrived. Have a nice taste! ");
 									}
+									else if(HELLOLITTLEGIRL.equals(msg.getContent())) 
+									{
+                                        // a guest has arrived
+                                        playersNumber++;
+										System.out.println("the little girl" +  getLocalName() + "arrived. Have a nice sneak! ");
+									}
 									else if(ACK.equals(msg.getContent())) 
 									{
                                         // a ack was received
@@ -146,6 +153,7 @@ import java.text.NumberFormat;
 	{
 		int nWerewolves = 3;
 		int nVillagers = 5;
+		int nLittlegirl = 1;
         // remove any old state
         players.clear();
         playersNumber = 0;
@@ -179,6 +187,15 @@ import java.text.NumberFormat;
                 // keep the guest's ID on a local list
                 players.add( new AID(localName, AID.ISLOCALNAME) );
             }
+			for (int i = 0; i < nLittlegirl; i++) {
+				//create new agent
+		String localName = "playerLittleGirl"+i;
+		System.out.println("little girl created");
+		AgentController guest = container.createNewAgent(localName, "WolfHunt.LittleGirl", null);
+		guest.start();
+
+                // keep the guest's ID on a local list
+                players.add( new AID(localName, AID.ISLOCALNAME) );
         }
         catch (Exception e) {
             System.err.println( "Exception while adding guests: " + e );
