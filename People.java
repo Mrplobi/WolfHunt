@@ -123,7 +123,7 @@ public static int randInt(int min, int max) {
 												for (int i = 0; i < result.length; ++i) 
 												{
 													players.add(result[i].getName());
-													if (result[i].getName() != getAID()){		//CHECK THIS
+													if (!result[i].getName().equals( getAID())){		//CHECK THIS
 														otherLivingPlayers.add(result[i].getName());   
 													}
 												}
