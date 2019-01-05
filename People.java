@@ -62,6 +62,7 @@ public class People
 	public State currentState;
 	protected String suspect;                       //Name of the current highest suspect
 	protected ArrayList trustyLivingPlayers;
+	protected ArrayList werewolfs;
 	
 	
 	
@@ -161,21 +162,6 @@ public class People
 											}
 										}
 									}
-									
-//TODO GERER MIEUX LE ACK
-									//									ack(msg);
-/*                                    else if (msg.getContent().startsWith( HostAgent.HELLO )) {
-                                        // someone saying hello
-                                        passRumour( msg.getSender() );
-                                    }
-                                    else if (msg.getContent().startsWith( HostAgent.RUMOUR )) {
-                                        // someone passing a rumour to me
-                                        hearRumour();
-                                    }
-                                    else {
-                                        System.out.println( "Guest received unexpected message: " + msg );
-                                    }
- */          //                   System.out.println("Got somethin received in people");
 									}
                                 else {
                                     // if no message is arrived, block the behaviour
