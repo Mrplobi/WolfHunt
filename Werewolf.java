@@ -56,8 +56,9 @@ public class Werewolf extends People
 	}
 
 	@Override
-	protected void WerewolfTimeAction(ACLMessage msg)
+	protected void WerewolfTimeAction(ACLMessage msg,boolean jumpStart)
 	{
+		awake=true;
 		if(werewolfs==null)//On remplit les deux listes wold et not wolf
 		{
 		 werewolfs=new ArrayList<AID>();
@@ -70,13 +71,13 @@ public class Werewolf extends People
 		try
 		{
 		DFAgentDescription[] result = DFService.search(this, dfd);
-		System.out.println("COMPARE "+ getAID()); 
+	//	System.out.println("COMPARE "+ getAID()); 
 		for (int i = 0; i < result.length; ++i) 
 		{
 			//players.add(result[i].getName());
 			
 			if (!result[i].getName().equals(getAID())){	
-			System.out.println("TO "+result[i].getName());
+		//	System.out.println("TO "+result[i].getName());
 			werewolfs.add(result[i].getName());   
 			}
 		}
@@ -101,12 +102,16 @@ public class Werewolf extends People
 			//System.out.println(ind);
 			suspect = nonWolf.get(randInt(0,nonWolf.size() - 1));
 			System.out.println("Me be " + behaviour + " " + getLocalName() + ". Me want to eat" + suspect);
+			if(jumpStart)
+			{
+				//SendAccusation(suspect, werewolfs);
+			}
 		}
-		if(nonWolf.contains(stringToAID(msg.getContent()))){
+		if(nonWolf.contains(People.stringToAID(msg.getContent()))){
 			//System.out.println(msg.getSender() + " LAAAAAAAAAAAAAAAAAAAAAAAAAAA " + msg.getContent()  ); 
 			if (behaviour == BehaviourType.behaviours.suiveur)																//Le suiveur se fait convaincre à chaque fois et transmet l'info (une vrai girouette ce suiveur)
 			{
-				suspect = stringToAID(msg.getContent());
+				suspect = People.stringToAID(msg.getContent());
 				SendAccusation(suspect, werewolfs);
 			}
 			else if (behaviour == BehaviourType.behaviours.meneur)
@@ -114,15 +119,17 @@ public class Werewolf extends People
 				if(randInt(0, 9) < 2)																//Le meneur est convaincu, change de cible et transmet
 				{
 					trustyLivingPlayers.remove(msg.getContent());
-					suspect = stringToAID(msg.getContent());
+					suspect = People.stringToAID(msg.getContent());
 					SendAccusation(suspect, werewolfs);
+				}
+				else
+				{																				//Le meneur n'est pas convaincu, il répend donc sa théorie et pas celle qui lui arrive
+				SendAccusation(suspect, werewolfs);
 				}
 			}
 		}
-		else{																				//Le meneur n'est pas convaincu, il répend donc sa théorie et pas celle qui lui arrive
-			SendAccusation(suspect, werewolfs);
-			}
-							
+		
+		
 		
 	}
 	
@@ -135,19 +142,19 @@ public class Werewolf extends People
 		}
 		else if (behaviour == BehaviourType.behaviours.suiveur)																//Le suiveur se fait convaincre à chaque fois et transmet l'info (une vrai girouette ce suiveur)
 		{
-			suspect = stringToAID(msg.getContent());
+			suspect = People.stringToAID(msg.getContent());
 			SendAccusation(suspect, trustyLivingPlayers);
 		}
 		else if (behaviour == BehaviourType.behaviours.meneur)
 		{
 			if ( !trustyLivingPlayers.contains(msg.getContent())){									//Le meneur était déjà sur cette piste un peu, change donc de suspect et répend la cible
-				suspect = stringToAID(msg.getContent());
+				suspect = People.stringToAID(msg.getContent());
 				SendAccusation(suspect, trustyLivingPlayers);
 			}
 			else if(randInt(0, 9) < 2)																//Le meneur est convaincu, change de cible et transmet
 			{
 				trustyLivingPlayers.remove(msg.getContent());
-				suspect = stringToAID(msg.getContent());
+				suspect = People.stringToAID(msg.getContent());
 				SendAccusation(suspect, trustyLivingPlayers);
 			}
 			else{																					//Le meneur n'est pas convaincu, il répend donc sa théorie et pas celle qui lui arrive

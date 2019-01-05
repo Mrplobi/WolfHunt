@@ -153,14 +153,19 @@ public static int randInt(int min, int max) {
 									else if (msg.getContent().startsWith(MJAgent.WAKEWEREWOLVES))
 									{
 										currentState = State.WEREWOLF;
-										WerewolfTimeAction(msg);
+										WerewolfTimeAction(msg,true);
 										
 									}
-									else if (currentState == State.WEREWOLF && players.contains(stringToAID(msg.getContent()))){
+									else if (currentState == State.WEREWOLF && players.contains(stringToAID(msg.getContent())) && awake ){
 										
-										WerewolfTimeAction(msg);
+										WerewolfTimeAction(msg,false);
 									}
-									else if (currentState == State.VOTETIME && players.contains(msg.getContent())){
+									else if(msg.getContent().startsWith(MJAgent.STFU))
+									{
+										awake=false;//On s'endort et on caste les votes
+										CastVote();
+									}
+									else if (currentState == State.VOTETIME && players.contains(stringToAID(msg.getContent()))){
 										
 										VoteTimeAction(msg);
 									}
@@ -194,13 +199,14 @@ public static int randInt(int min, int max) {
 	
 	//sends vote to MJ using MJagent as receiver
 	
-	protected void CastVote(AID suspect)
+	protected void CastVote()
 	{
 		System.out.println( getLocalName() + " voted for " + suspect);
 		ACLMessage vote = new ACLMessage( ACLMessage.INFORM );
 		vote.setContent( suspect.toString() );
 		vote.addReceiver( MJ );
 		send(vote);
+
 	}
 	
 	protected void ack(ACLMessage msg)
@@ -211,7 +217,7 @@ public static int randInt(int min, int max) {
 			msgSent.addReceiver( msg.getSender() );
 			send(msgSent);
 	}
-	public AID stringToAID(String str)
+	public static AID stringToAID(String str)
 	{
 		StringACLCodec codec = new StringACLCodec(new StringReader(str), null);
 		try 
@@ -228,7 +234,7 @@ public static int randInt(int min, int max) {
 		
 	}
 	
-	protected void WerewolfTimeAction(ACLMessage msg){
+	protected void WerewolfTimeAction(ACLMessage msg,boolean jumpStart){
 	
 	}
 

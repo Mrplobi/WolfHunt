@@ -37,18 +37,25 @@ import java.text.NumberFormat;
     protected int acksNumber = 0;              // arrivals
 	protected boolean isGameOver = true ;
 	protected long m_startTime = 0;
+	protected long startVote = 0;
+	protected int voteReceived = 0;
+	protected boolean listenningToVote = false;
+	protected long durationVote = 100;
+	protected AID deadGuy=null;
     protected boolean gameStarted = false;
 
     public static final String HELLOWEREWOLF = "MEBEWEREWOLF";
     public static final String HELLOVILLAGER = "MEBEPOORVILLAGER";
 	public static final String HELLOLITTLEGIRL = "MEBEPOORLITTLEGIRL";
     public static final String ACK = "ACK";
+    public static final String STFU = "STFU";
     public static final String GOODBYE = "Bye";
 	public static final String NIGHTTIME= "Night";
 	public static final String DAYTIME= "Day";
 	public static final String VOTETIME= "vote";
 	public static final String WAKEWEREWOLVES= "WakeWerewolves";
 	public HashMap<State, String> messageToSend;
+	public HashMap<AID, Integer> voteReceivedMap;
 	public State currentState = State.NIGHTTIME;
 	
 	public MJAgent()
@@ -87,9 +94,55 @@ import java.text.NumberFormat;
             // add a Behaviour to handle messages from guests
             addBehaviour( new CyclicBehaviour( this ) {
                             public void action() {
+								
+										System.out.println("il est"+ System.currentTimeMillis());
+								
+																		
+								if(currentState==State.WEREWOLF && System.currentTimeMillis()>startVote+durationVote)
+								{
+									System.out.println("STFFU FFS");
+									for (Iterator i = players.iterator();  i.hasNext();  ) 
+										{
+											ACLMessage msgSent = new ACLMessage( ACLMessage.INFORM );
+											msgSent.setContent( STFU );
+											msgSent.addReceiver( (AID) i.next() );	
+											send(msgSent);
+											listenningToVote = true;
+											voteReceived=0;
+										}
+										
+								}
                                 ACLMessage msg = receive();
 
                                 if (msg != null) {
+									
+									if(listenningToVote && voteReceived<players.size() && players.contains(People.stringToAID(msg.getContent())))//TODO: modify whith just alive ones
+									{
+										System.out.println(msg.getSender() + "a voté " + msg.getContent() );
+										voteReceivedMap.put(People.stringToAID(msg.getContent()),voteReceivedMap.get(People.stringToAID(msg.getContent()+1)));//increment vote count
+										voteReceived++;
+										
+									}
+									else if(listenningToVote && voteReceived>=players.size())
+									{
+										listenningToVote=false;
+										voteReceived=0;
+										int max = -1;
+										
+										//Kill the person
+										for(Map.Entry<AID, Integer> entry : voteReceivedMap.entrySet()) 
+										{
+											AID key = entry.getKey();
+											int value = entry.getValue();
+											if(value > max)
+											{
+												deadGuy = key;
+											}
+										}
+										voteReceivedMap.clear();
+										System.out.println(deadGuy.getLocalName() + "VA MOURIR! MWAHAHHAHA");
+									}
+
                                     if (HELLOWEREWOLF.equals(msg.getContent())) 
 									{
                                         // a guest has arrived
@@ -127,6 +180,13 @@ import java.text.NumberFormat;
 
 										acksNumber=0;
 										currentState = currentState.next();
+										if(currentState == State.WEREWOLF)
+										{
+											System.out.println("vous avez 100 ms pour discuter. LOL");
+											startVote=System.currentTimeMillis();
+											System.out.println("il est"+ startVote);
+
+										}
 										System.out.println("Since everybody acked let's do " + currentState);
 										sendState();
 									}
