@@ -156,6 +156,10 @@ public static int randInt(int min, int max) {
 										WerewolfTimeAction(msg);
 										
 									}
+									else if (currentState == State.WEREWOLF && players.contains(stringToAID(msg.getContent()))){
+										
+										WerewolfTimeAction(msg);
+									}
 									else if (currentState == State.VOTETIME && players.contains(msg.getContent())){
 										
 										VoteTimeAction(msg);
