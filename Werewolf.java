@@ -76,7 +76,7 @@ public class Werewolf extends People
 				{
 					//players.add(result[i].getName());
 					
-					if (result[i].getName() != getAID()){	
+					if (!result[i].getName().equals(getAID())){	
 					System.out.println("TO "+result[i].getName());
 					werewolfs.add(result[i].getName());   
 					}
@@ -87,22 +87,22 @@ public class Werewolf extends People
 					{
 						nonWolf.add(players.get(i));
 					}
-				}
-				
+				}					
 				System.out.println("We detected"+werewolfs.size() + " wolves and " + nonWolf.size() + " nonWolf");
-				
+				}
 			}
-			catch(Exception e)
-			{ 
+		catch(Exception e)
+		{ 
 			System.out.println("an error occured while finding other wolves");
-			}
 		}
+			
 		if (suspect == null || !otherLivingPlayers.contains(suspect)){
 			
 			//System.out.println(ind);
 			suspect = nonWolf.get(randInt(0,nonWolf.size() - 1));
 			System.out.println("Me be " + behaviour + " " + getLocalName() + ". Me want to eat" + suspect);
 		}
+		
 		
 		if (primeSuspect != null && nLittleGirl != 0){	//I know the little girl, she MUST die
 			SendAccusation(littleGirl, werewolfs);

@@ -86,7 +86,8 @@ public static int randInt(int min, int max) {
 					// listen if a greetings message arrives
 					ACLMessage msg = receive( MessageTemplate.MatchPerformative( ACLMessage.INFORM ) );
 
-					if (msg != null) {
+					if (msg != null) 
+					{
 						if (MJAgent.GOODBYE.equals( msg.getContent() )) 
 						{
 							// time to go
@@ -105,12 +106,11 @@ public static int randInt(int min, int max) {
 									sd.setType( "WerewolfPlayer" );
 									DFAgentDescription dfd = new DFAgentDescription();
 									dfd.addServices( sd );
-
 									DFAgentDescription[] result = DFService.search(myAgent, dfd);
 									for (int i = 0; i < result.length; ++i) 
 									{
 										players.add(result[i].getName());
-										if (result[i].getName() != getAID()){		//CHECK THIS
+										if (!result[i].getName().equals( getAID())){		//CHECK THIS
 											otherLivingPlayers.add(result[i].getName());   
 										}
 									}
@@ -120,7 +120,7 @@ public static int randInt(int min, int max) {
 								catch(FIPAException fe) {
 									fe.printStackTrace();
 								}
-						// Perform the request
+								// Perform the request
 							}
 							ack(msg);
 						}
