@@ -143,16 +143,14 @@ public static int randInt(int min, int max) {
 									else if (msg.getContent().startsWith(MJAgent.WAKEWEREWOLVES))
 									{
 										currentState = State.WEREWOLF;
-										awake = true;
+										WerewolfTimeAction(msg);
+										
 									}
 									else if (currentState == State.VOTETIME && players.contains(msg.getContent())){
 										
 										VoteTimeAction(msg);
 									}
-									else if(currentState == State.WEREWOLF)
-									{
-										WerewolfTimeAction(msg);
-									}
+
 								}
                                 else {
                                     // if no message is arrived, block the behaviour
@@ -172,7 +170,7 @@ public static int randInt(int min, int max) {
 	
 	protected void SendAccusation(AID suspect, ArrayList<AID> possibleReceivers)   //CHECK THIS method especially the types of the objects
 	{
-		AID receiver = possibleReceivers.get(randInt(0, possibleReceivers.size()));
+		AID receiver = possibleReceivers.get(randInt(0, possibleReceivers.size() - 1));
 		System.out.println( getLocalName() + " accused " + suspect + " in front of " + receiver);
 		ACLMessage accusation = new ACLMessage( ACLMessage.INFORM );
 		accusation.setContent( suspect.toString() );

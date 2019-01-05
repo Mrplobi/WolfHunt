@@ -96,7 +96,7 @@ public class Werewolf extends People
 		}
 		
 		if (suspect == null){
-			suspect = nonWolf.get(randInt(0, nonWolf.size()));
+			suspect = nonWolf.get(randInt(0, nonWolf.size() - 1));
 		}
 		if(nonWolf.contains(msg.getContent())){
 			if (behaviour == BehaviourType.behaviours.suiveur)																//Le suiveur se fait convaincre à chaque fois et transmet l'info (une vrai girouette ce suiveur)
