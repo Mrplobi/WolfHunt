@@ -83,7 +83,6 @@ public class LittleGirl extends People
 			if ( !trustyLivingPlayers.contains(msg.getContent()){						//Le meneur était déjà sur cette piste un peu, change donc de suspect et répend la cible
 				suspect = msg.getContent();
 				SendAccusation(suspect, trustyLivingPlayers);
->>>>>>> 515f6ed93eb72701becf374f07f21d23a34319f8
 			}
 			else if(randInt(0, 9) < 2)													//Le meneur est convaincu, change de cible et transmet
 			{
