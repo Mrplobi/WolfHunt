@@ -54,7 +54,7 @@ public class Villager extends People
 	protected void VoteTimeAction(ACLMessage msg){		
 		if (msg.getContent() == getLocalName())													//On m'accuse, j'accuse en retour
 		{
-			trustyLivingPlayers.remove(msg.getSender().getName());
+			trustyLivingPlayers.remove(msg.getSender());
 			SendAccusation(msg.getSender(), trustyLivingPlayers);
 		}
 		else if (behaviour == BehaviourType.behaviours.suiveur)															//Le suiveur se fait convaincre à chaque fois et transmet l'info (une vrai girouette ce suiveur)
