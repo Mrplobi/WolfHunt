@@ -94,11 +94,14 @@ public class Werewolf extends People
 		System.out.println("an error occured while finding other wolves");
 		}
 		}
-		
 		if (suspect == null){
-			suspect = nonWolf.get(randInt(0, nonWolf.size() - 1));
+			
+			//System.out.println(ind);
+			suspect = nonWolf.get(randInt(0,nonWolf.size() - 1));
+			System.out.println("Me be " + behaviour + " " + getLocalName() + ". Me want to eat" + suspect);
 		}
-		if(nonWolf.contains(msg.getContent())){
+		if(nonWolf.contains(stringToAID(msg.getContent()))){
+			System.out.println(msg.getSender() + " accused " + msg.getContent()  ); 
 			if (behaviour == BehaviourType.behaviours.suiveur)																//Le suiveur se fait convaincre à chaque fois et transmet l'info (une vrai girouette ce suiveur)
 			{
 				suspect = stringToAID(msg.getContent());
@@ -112,11 +115,13 @@ public class Werewolf extends People
 					suspect = stringToAID(msg.getContent());
 					SendAccusation(suspect, werewolfs);
 				}
-				else{																				//Le meneur n'est pas convaincu, il répend donc sa théorie et pas celle qui lui arrive
-					SendAccusation(suspect, werewolfs);
-				}
-			}				
+			}
 		}
+		else{																				//Le meneur n'est pas convaincu, il répend donc sa théorie et pas celle qui lui arrive
+			SendAccusation(suspect, werewolfs);
+			}
+							
+		
 	}
 	
 	@Override

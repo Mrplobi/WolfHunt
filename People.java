@@ -81,6 +81,16 @@ public static int randInt(int min, int max) {
 			players = new ArrayList();
 			otherLivingPlayers = new ArrayList();
 			trustyLivingPlayers = new ArrayList();
+			if(randInt(0,1)==0)
+			{
+				System.out.println(getLocalName() +" est un meneur");
+				behaviour = BehaviourType.behaviours.meneur;
+			}
+			else
+			{
+				System.out.println(getLocalName() +" est un suiveur");
+				behaviour = BehaviourType.behaviours.suiveur;
+			}
 						//=============== 
             // add a Behaviour to process incoming messages
             addBehaviour( new CyclicBehaviour( this ) 
