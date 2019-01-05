@@ -75,7 +75,7 @@ public class Werewolf extends People
 		{
 			//players.add(result[i].getName());
 			
-			if (result[i].getName() != getAID()){	
+			if (!result[i].getName().equals(getAID())){	
 			System.out.println("TO "+result[i].getName());
 			werewolfs.add(result[i].getName());   
 			}
