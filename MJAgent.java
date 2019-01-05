@@ -39,6 +39,7 @@ import java.text.NumberFormat;
 	protected long m_startTime = 0;
 	protected long startVote = 0;
 	protected int voteReceived = 0;
+	protected boolean saidStfu=false;
 	protected boolean listenningToVote = false;
 	protected long durationVote = 100;
 	protected AID deadGuy=null;
@@ -65,7 +66,8 @@ import java.text.NumberFormat;
 		messageToSend.put(State.WEREWOLF,WAKEWEREWOLVES);
 		messageToSend.put(State.DAYTIME,DAYTIME);
 		messageToSend.put(State.VOTETIME,VOTETIME);
-    }
+		voteReceivedMap = new HashMap<AID, Integer> ();
+		}
 	public void sendState()
 	{
 		
@@ -86,6 +88,7 @@ import java.text.NumberFormat;
         try {
             System.out.println( getLocalName() + " setting up");
 
+
             // create the agent descrption of itself
             DFAgentDescription dfd = new DFAgentDescription();
             dfd.setName( getAID() );
@@ -95,11 +98,10 @@ import java.text.NumberFormat;
             addBehaviour( new CyclicBehaviour( this ) {
                             public void action() {
 								
-										System.out.println("il est"+ System.currentTimeMillis());
-								
 																		
-								if(currentState==State.WEREWOLF && System.currentTimeMillis()>startVote+durationVote)
+								if(currentState==State.WEREWOLF && System.currentTimeMillis()>startVote+durationVote && !saidStfu)
 								{
+									saidStfu=true;
 									System.out.println("STFFU FFS");
 									for (Iterator i = players.iterator();  i.hasNext();  ) 
 										{
@@ -118,17 +120,24 @@ import java.text.NumberFormat;
 									
 									if(listenningToVote && voteReceived<players.size() && players.contains(People.stringToAID(msg.getContent())))//TODO: modify whith just alive ones
 									{
-										System.out.println(msg.getSender() + "a voté " + msg.getContent() );
+										System.out.println(msg.getSender().getLocalName() + "a voté " + People.stringToAID(msg.getContent()).getLocalName() );
+										if(voteReceivedMap.get(People.stringToAID(msg.getContent()))==null)
+										{
+										voteReceivedMap.put(People.stringToAID(msg.getContent()),1);	
+										}
+										else
+										{
 										voteReceivedMap.put(People.stringToAID(msg.getContent()),voteReceivedMap.get(People.stringToAID(msg.getContent()+1)));//increment vote count
+										}
 										voteReceived++;
 										
 									}
-									else if(listenningToVote && voteReceived>=players.size())
+									if(listenningToVote && currentState==State.WEREWOLF && voteReceived>=3)//TO MODIFY
 									{
 										listenningToVote=false;
 										voteReceived=0;
 										int max = -1;
-										
+										System.out.println("Size vote"+voteReceivedMap.size());
 										//Kill the person
 										for(Map.Entry<AID, Integer> entry : voteReceivedMap.entrySet()) 
 										{
@@ -180,20 +189,21 @@ import java.text.NumberFormat;
 
 										acksNumber=0;
 										currentState = currentState.next();
+										System.out.println("Since everybody acked let's do " + currentState);
+										sendState();
 										if(currentState == State.WEREWOLF)
 										{
 											System.out.println("vous avez 100 ms pour discuter. LOL");
-											startVote=System.currentTimeMillis();
+											startVote = System.currentTimeMillis();
 											System.out.println("il est"+ startVote);
 
 										}
-										System.out.println("Since everybody acked let's do " + currentState);
-										sendState();
+										
 									}
                                 }
                                 else {
                                     // if no message is arrived, block the behaviour
-                                    block();
+                                  //  block();
                                 }
                             }
                         } );

@@ -104,7 +104,7 @@ public class Werewolf extends People
 			System.out.println("Me be " + behaviour + " " + getLocalName() + ". Me want to eat" + suspect);
 			if(jumpStart)
 			{
-				//SendAccusation(suspect, werewolfs);
+				SendAccusation(suspect, werewolfs);
 			}
 		}
 		if(nonWolf.contains(People.stringToAID(msg.getContent()))){

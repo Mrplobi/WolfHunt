@@ -201,12 +201,14 @@ public static int randInt(int min, int max) {
 	
 	protected void CastVote()
 	{
+		if(suspect!=null)
+		{
 		System.out.println( getLocalName() + " voted for " + suspect);
 		ACLMessage vote = new ACLMessage( ACLMessage.INFORM );
 		vote.setContent( suspect.toString() );
 		vote.addReceiver( MJ );
 		send(vote);
-
+		}
 	}
 	
 	protected void ack(ACLMessage msg)
