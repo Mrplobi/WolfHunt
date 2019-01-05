@@ -130,7 +130,7 @@ public static int randInt(int min, int max) {
 							if(behaviour == BehaviourType.behaviours.meneur)
 							{
 								//pick player au hasard et start spread rumeur
-								if (suspect == null)
+								if (suspect == null || !otherLivingPlayers.contains(suspect))
 								{
 									suspect = otherLivingPlayers.get(randInt(0, 9));
 								}

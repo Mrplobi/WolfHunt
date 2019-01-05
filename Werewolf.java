@@ -97,22 +97,26 @@ public class Werewolf extends People
 			System.out.println("an error occured while finding other wolves");
 			}
 		}
-		if (suspect == null){
+		if (suspect == null || !otherLivingPlayers.contains(suspect)){
 			
 			//System.out.println(ind);
 			suspect = nonWolf.get(randInt(0,nonWolf.size() - 1));
 			System.out.println("Me be " + behaviour + " " + getLocalName() + ". Me want to eat" + suspect);
 		}
-		if (primeSuspect == null){
+		
+		if (primeSuspect != null && nLittleGirl != 0){	//I know the little girl, she MUST die
+			SendAccusation(littleGirl, werewolfs);
+		}
+		else{
 			if(nonWolf.contains(stringToAID(msg.getContent()))){
-				if (behaviour == BehaviourType.behaviours.suiveur)																//Le suiveur se fait convaincre à chaque fois et transmet l'info (une vrai girouette ce suiveur)
+				if (behaviour == BehaviourType.behaviours.suiveur)		//Le suiveur se fait convaincre à chaque fois et transmet l'info (une vrai girouette ce suiveur)
 				{
 					suspect = stringToAID(msg.getContent());
 					SendAccusation(suspect, werewolfs);
 				}
 				else if (behaviour == BehaviourType.behaviours.meneur)
 				{
-					if(randInt(0, 9) < 2)																//Le meneur est convaincu, change de cible et transmet
+					if(randInt(0, 9) < 2)		//Le meneur est convaincu, change de cible et transmet
 					{
 						trustyLivingPlayers.remove(msg.getContent());
 						suspect = stringToAID(msg.getContent());
@@ -120,12 +124,9 @@ public class Werewolf extends People
 					}
 				}
 			}
-			else {																				//Le meneur n'est pas convaincu, il répend donc sa théorie et pas celle qui lui arrive
+			else {		//Le meneur n'est pas convaincu, il répend donc sa théorie et pas celle qui lui arrive
 			SendAccusation(suspect, werewolfs);
 			}
-		}
-		else{	//I know the little girl, she MUST die
-			SendAccusation(littleGirl, werewolfs);
 		}
 	}
 	

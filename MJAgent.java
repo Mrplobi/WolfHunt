@@ -39,9 +39,9 @@ import java.text.NumberFormat;
 	protected long m_startTime = 0;
     protected boolean gameStarted = false;
 
-	public int nWerewolves = 3;
-	public int nVillagers = 6;
-	public int nLittlegirl = 1;
+	public static int nWerewolves = 3;
+	public static int nVillagers = 6;
+	public static int nLittlegirl = 1;
     public static final String HELLOWEREWOLF = "MEBEWEREWOLF";
     public static final String HELLOVILLAGER = "MEBEPOORVILLAGER";
 	public static final String HELLOLITTLEGIRL = "MEBEPOORLITTLEGIRL";
