@@ -61,8 +61,8 @@ public class People
 	public AID MJ;
 	public State currentState;
 	protected String suspect;                       //Name of the current highest suspect
+	protected ArrayList otherLivingPlayers;
 	protected ArrayList trustyLivingPlayers;
-	protected ArrayList werewolfs;
 	
 	
 	
@@ -75,6 +75,8 @@ public class People
     protected void setup() {
         try {
 			players = new ArrayList();
+			otherLivingPlayers = new ArrayList();
+			trustyLivingPlayers = new ArrayList();
 						//=============== 
             // add a Behaviour to process incoming messages
             addBehaviour( new CyclicBehaviour( this ) 
@@ -108,7 +110,7 @@ public class People
 												{
 													players.add(result[i].getName());
 													if (result[i].getName() != getLocalName()){		//CHECK THIS
-														livingPlayers.add(result[i].getName());   
+														otherLivingPlayers.add(result[i].getName());   
 													}
 												}
 												System.out.println(players.size());
@@ -117,7 +119,7 @@ public class People
 											catch(FIPAException fe) {
 												fe.printStackTrace();
 											}
-// Perform the request
+									// Perform the request
 										}
 										
 									}
@@ -134,35 +136,20 @@ public class People
 											SendAccusation(suspect, otherLivingPlayers);
 										}
 									}
-									else if (currentState == VOTETIME && players.contains(msg.getcontent()){
-										if (msg.getContent() == getLocalName())
-										{
-											trustyLivingPlayers.remove(msg.getSender().getName());
-											SendAccusation(msg.getSender().getName(), trustyLivingPlayers);
-										}
-										else if (behaviour == suiveur)									//Le suiveur se fait convaincre à chaque fois et transmet l'info (une vrai girouette ce suiveur)
-										{
-											suspect = msg.getContent();
-											SendAccusation(suspect, trustyLivingPlayers);
-										}
-										else if (behaviour = meneur)
-										{
-											if ( !trustyLivingPlayers.contains(msg.getContent()){						//Le meneur était déjà sur cette piste un peu, change donc de suspect et répend la cible
-												suspect = msg.getContent();
-												SendAccusation(suspect, trustyLivingPlayers);
-											}
-											else if(randInt(0, 9) < 2)				//Le meneur est convaincu, change de cible et transmet
-											{
-												trustyLivingPlayers.remove(msg.getContent());
-												suspect = msg.getContent();
-												SendAccusation(suspect, trustyLivingPlayers);
-											}
-											else{									//Le meneur n'est pas convaincu, il répend donc sa théorie et pas celle qui lui arrive
-												SendAccusation(suspect, trustyLivingPlayers);
-											}
-										}
+									else if (msg.getcontent().startsWith(MJAgent.WEREWOLF))
+									{
+										currentState = WEREWOLF;
+										awake = true;
 									}
+									else if (currentState == VOTETIME && players.contains(msg.getContent())){
+										
+										VoteTimeAction(msg);
 									}
+									else if(currentState = WEREWOLF)
+									{
+										WerewolfTimeAction(msg);
+									}
+								}
                                 else {
                                     // if no message is arrived, block the behaviour
                                     block();
@@ -207,6 +194,14 @@ public class People
 			msgSent.setContent( MJAgent.ACK );
 			msgSent.addReceiver( msg.getSender() );
 			send(msgSent);
+	}
+	
+	protected void VoteTimeAction(ACLMessage msg){
+		
+	}
+	
+	protected void WerewolfTimeAction(ACLMessage msg){
+	
 	}
 
     // Internal implementation methods
