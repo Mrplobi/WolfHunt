@@ -28,7 +28,7 @@ public class LittleGirl extends People
 			try
 			{			
 		    ServiceDescription sd = new ServiceDescription();
-            sd.setType( "LittleGirlPlayer" );
+            sd.setType( "WerewolfPlayer" );
             sd.setName( "LittleGirl" );
             DFAgentDescription dfd = new DFAgentDescription();
             dfd.setName( getAID() );
