@@ -185,7 +185,7 @@ public static int randInt(int min, int max) {
 	protected void SendAccusation(AID suspect, ArrayList<AID> possibleReceivers)   //CHECK THIS method especially the types of the objects
 	{
 		AID receiver = possibleReceivers.get(randInt(0, possibleReceivers.size() - 1));
-		System.out.println( getLocalName() + " accused " + suspect + " in front of " + receiver);
+		System.out.println( getLocalName() + " accused " + suspect.getName() + " in front of " + receiver.getName());
 		ACLMessage accusation = new ACLMessage( ACLMessage.INFORM );
 		accusation.setContent( suspect.toString() );
 		accusation.addReceiver( receiver );

@@ -70,11 +70,13 @@ public class Werewolf extends People
 		try
 		{
 		DFAgentDescription[] result = DFService.search(this, dfd);
-		
+		System.out.println("COMPARE "+ getAID()); 
 		for (int i = 0; i < result.length; ++i) 
 		{
-			players.add(result[i].getName());
+			//players.add(result[i].getName());
+			
 			if (result[i].getName() != getAID()){	
+			System.out.println("TO "+result[i].getName());
 			werewolfs.add(result[i].getName());   
 			}
 		}
@@ -101,7 +103,7 @@ public class Werewolf extends People
 			System.out.println("Me be " + behaviour + " " + getLocalName() + ". Me want to eat" + suspect);
 		}
 		if(nonWolf.contains(stringToAID(msg.getContent()))){
-			System.out.println(msg.getSender() + " accused " + msg.getContent()  ); 
+			//System.out.println(msg.getSender() + " LAAAAAAAAAAAAAAAAAAAAAAAAAAA " + msg.getContent()  ); 
 			if (behaviour == BehaviourType.behaviours.suiveur)																//Le suiveur se fait convaincre à chaque fois et transmet l'info (une vrai girouette ce suiveur)
 			{
 				suspect = stringToAID(msg.getContent());
