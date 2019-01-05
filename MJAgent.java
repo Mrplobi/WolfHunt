@@ -37,7 +37,7 @@ import java.text.NumberFormat;
     protected int acksNumber = 0;              // arrivals
 	protected boolean isGameOver = true ;
 	protected long m_startTime = 0;
-   
+    protected boolean gameStarted = false;
 
     public static final String HELLOWEREWOLF = "MEBEWEREWOLF";
     public static final String HELLOVILLAGER = "MEBEPOORVILLAGER";
@@ -114,17 +114,20 @@ import java.text.NumberFormat;
                                         acksNumber++;
 										
 									}
-                                    if ( playersNumber == players.size()) 
+                                    if ( playersNumber == players.size() && !gameStarted) 
 									{
                                         System.out.println( "The night has set down, everybody close their eyes in JIN(X)City" );
                                         // all guests have arrived
+										gameStarted = true;
 										currentState=State.NIGHTTIME;
 										sendState();
                                     }
 									if(acksNumber == players.size())	
 									{
+
 										acksNumber=0;
 										currentState = currentState.next();
+										System.out.println("Since everybody acked let's do " + currentState);
 										sendState();
 									}
                                 }

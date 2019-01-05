@@ -25,7 +25,7 @@ public class Werewolf extends People
 	
 	protected void setup()
 	{
-		werewolfs = new ArrayList();
+		
 		MJ=new AID( "MJ", AID.ISLOCALNAME );
 
 		// create the agent descrption of itself
@@ -40,12 +40,13 @@ public class Werewolf extends People
 
 		// register the description with the DF
 		DFService.register( this, dfd );
-
+		
 		// notify the host that we have arrived
 		ACLMessage hello = new ACLMessage( ACLMessage.INFORM );
 		hello.setContent( MJAgent.HELLOWEREWOLF );
 		hello.addReceiver( MJ );
 		send( hello );
+		
 		}
 		catch(Exception e)
 		{
@@ -55,7 +56,45 @@ public class Werewolf extends People
 	}
 
 	@Override
-	protected void WerewolfTimeAction(ACLMessage msg){
+	protected void WerewolfTimeAction(ACLMessage msg)
+	{
+		if(werewolfs==null)//On remplit les deux listes wold et not wolf
+		{
+		 werewolfs=new ArrayList<AID>();
+		 nonWolf=new ArrayList<AID>();
+		ServiceDescription sd = new ServiceDescription();
+		sd.setType( "WerewolfPlayer" );
+		sd.setName( "Werewolf" );
+		DFAgentDescription dfd = new DFAgentDescription();
+		dfd.addServices( sd );
+		try
+		{
+		DFAgentDescription[] result = DFService.search(this, dfd);
+		
+		for (int i = 0; i < result.length; ++i) 
+		{
+			players.add(result[i].getName());
+			if (result[i].getName() != getAID()){	
+			werewolfs.add(result[i].getName());   
+			}
+		}
+		for (int i = 0; i < players.size(); ++i) 
+		{
+			if(!werewolfs.contains(players.get(i)))
+			{
+				nonWolf.add(players.get(i));
+			}
+		}
+		
+		System.out.println("We detected"+werewolfs.size() + " wolves and " + nonWolf.size() + " nonWolf");
+		
+		}
+		catch(Exception e)
+		{ 
+		System.out.println("an error occured while finding other wolves");
+		}
+		}
+		
 		if (suspect == null){
 			suspect = nonWolf.get(randInt(0, nonWolf.size()));
 		}

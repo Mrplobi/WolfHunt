@@ -26,7 +26,7 @@ import java.util.Random;
 public class People
     extends Agent
 {
-	protected ArrayList players ; 
+	protected ArrayList<AID> players ; 
 	protected boolean awake;
 	protected BehaviourType.behaviours behaviour;
 	public BehaviourType behaviourType;
@@ -98,7 +98,7 @@ public static int randInt(int min, int max) {
                                     else if (msg.getContent().startsWith( MJAgent.NIGHTTIME )) 
 									{
 										currentState = State.NIGHTTIME;
-										System.out.println("Me "+ getLocalName() + "be sleepy");
+										System.out.println("Me "+ getLocalName() + " be sleepy");
 										awake=false;
                                         if(players.size() == 0)//La première fois que tout le monde arrive on récupère les autres joueurs
 										{
@@ -125,7 +125,7 @@ public static int randInt(int min, int max) {
 											}
 									// Perform the request
 										}
-										
+										ack(msg);
 									}
 									else if (msg.getContent().startsWith(MJAgent.VOTETIME))
 									{
