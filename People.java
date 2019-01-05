@@ -8,7 +8,8 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
 import jade.core.behaviours.CyclicBehaviour;
-
+import jade.lang.acl.StringACLCodec;
+import java.io.StringReader;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.DFService;
@@ -21,6 +22,21 @@ import java.lang.Math;
 
 import java.util.Random;
 
+
+public class People
+    extends Agent
+{
+	protected ArrayList players ; 
+	protected boolean awake;
+	protected BehaviourType.behaviours behaviour;
+	public BehaviourType behaviourType;
+	public AID MJ;
+	public State currentState;
+	protected AID suspect;                       //Name of the current highest suspect
+	protected ArrayList<AID> otherLivingPlayers;
+	protected ArrayList<AID> trustyLivingPlayers;
+	public static Random rand;
+	
 /**
  * Returns a pseudo-random number between min and max, inclusive.
  * The difference between min and max can be at most
@@ -42,28 +58,16 @@ public static int randInt(int min, int max) {
     // 
     // In particular, do NOT do 'Random rand = new Random()' here or you
     // will get not very good / not very random results.
-    Random rand;
-
+    if(rand==null)
+	{
+		rand = new Random();
+	}
     // nextInt is normally exclusive of the top value,
     // so add 1 to make it inclusive
     int randomNum = rand.nextInt((max - min) + 1) + min;
 
     return randomNum;
 }
-
-public class People
-    extends Agent
-{
-	protected ArrayList players ; 
-	protected boolean awake;
-	protected behaviours behaviour;
-	public BehaviourType behaviourType;
-	public AID MJ;
-	public State currentState;
-	protected String suspect;                       //Name of the current highest suspect
-	protected ArrayList otherLivingPlayers;
-	protected ArrayList trustyLivingPlayers;
-	
 	
 	
     /**
@@ -93,7 +97,7 @@ public class People
                                     }
                                     else if (msg.getContent().startsWith( MJAgent.NIGHTTIME )) 
 									{
-										currentState = NIGHTTIME;
+										currentState = State.NIGHTTIME;
 										System.out.println("Me "+ getLocalName() + "be sleepy");
 										awake=false;
                                         if(players.size() == 0)//La première fois que tout le monde arrive on récupère les autres joueurs
@@ -109,12 +113,12 @@ public class People
 												for (int i = 0; i < result.length; ++i) 
 												{
 													players.add(result[i].getName());
-													if (result[i].getName() != getLocalName()){		//CHECK THIS
+													if (result[i].getName() != getAID()){		//CHECK THIS
 														otherLivingPlayers.add(result[i].getName());   
 													}
 												}
 												System.out.println(players.size());
-												System.out.println(livingPlayers.size());
+												System.out.println(otherLivingPlayers.size());
 											}
 											catch(FIPAException fe) {
 												fe.printStackTrace();
@@ -123,29 +127,29 @@ public class People
 										}
 										
 									}
-									else if (msg.getcontent().startsWith(MJAgent.VOTETIME))
+									else if (msg.getContent().startsWith(MJAgent.VOTETIME))
 									{
-										currentState = VOTETIME;
-										if(this.behaviour = behaviours.meneur)
+										currentState = State.VOTETIME;
+										if(behaviour == BehaviourType.behaviours.meneur)
 										{
 											//pick player au hasard et start spread rumeur
 											if (suspect == null)
 											{
-												suspect = otherLivingPlayers[randInt(0, 9)];
+												suspect = otherLivingPlayers.get(randInt(0, 9));
 											}
 											SendAccusation(suspect, otherLivingPlayers);
 										}
 									}
-									else if (msg.getcontent().startsWith(MJAgent.WEREWOLF))
+									else if (msg.getContent().startsWith(MJAgent.WAKEWEREWOLVES))
 									{
-										currentState = WEREWOLF;
+										currentState = State.WEREWOLF;
 										awake = true;
 									}
-									else if (currentState == VOTETIME && players.contains(msg.getContent())){
+									else if (currentState == State.VOTETIME && players.contains(msg.getContent())){
 										
 										VoteTimeAction(msg);
 									}
-									else if(currentState = WEREWOLF)
+									else if(currentState == State.WEREWOLF)
 									{
 										WerewolfTimeAction(msg);
 									}
@@ -166,24 +170,24 @@ public class People
 	
 	//Method sending a message to a random trusted player
 	
-	protected void SendAccusation(String suspect, ArrayList possibleReceivers)   //CHECK THIS method especially the types of the objects
+	protected void SendAccusation(AID suspect, ArrayList<AID> possibleReceivers)   //CHECK THIS method especially the types of the objects
 	{
-		People receiver = possibleReceivers[randInt(0, possibleReceivers.size()];
-		System.out.println( getLocalName() + " accused " + suspect.getName() + " in front of " + receiver.getName());
+		AID receiver = possibleReceivers.get(randInt(0, possibleReceivers.size()));
+		System.out.println( getLocalName() + " accused " + suspect + " in front of " + receiver);
 		ACLMessage accusation = new ACLMessage( ACLMessage.INFORM );
-		accusation.setContent( suspect );
-		accusation.addReceiver( receiver.getAID() );
+		accusation.setContent( suspect.toString() );
+		accusation.addReceiver( receiver );
 		send(accusation);
 	}
 	
 	//sends vote to MJ using MJagent as receiver
 	
-	protected void CastVote(String suspect)
+	protected void CastVote(AID suspect)
 	{
-		System.out.println( getLocalName() + " voted for " + suspect.getName());
+		System.out.println( getLocalName() + " voted for " + suspect);
 		ACLMessage vote = new ACLMessage( ACLMessage.INFORM );
-		vote.setContent( suspect );
-		vote.addReceiver( MJAgent );
+		vote.setContent( suspect.toString() );
+		vote.addReceiver( MJ );
 		send(vote);
 	}
 	
@@ -194,6 +198,18 @@ public class People
 			msgSent.setContent( MJAgent.ACK );
 			msgSent.addReceiver( msg.getSender() );
 			send(msgSent);
+	}
+	public AID stringToAID(String str)
+	{
+		StringACLCodec codec = new StringACLCodec(new StringReader(str), null);
+		try 
+		{
+			return codec.decodeAID();
+		}
+		catch(Exception code)
+		{
+			return null;
+		}
 	}
 	
 	protected void VoteTimeAction(ACLMessage msg){

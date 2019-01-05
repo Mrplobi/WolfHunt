@@ -197,6 +197,7 @@ import java.text.NumberFormat;
                 // keep the guest's ID on a local list
                 players.add( new AID(localName, AID.ISLOCALNAME) );
         }
+		}
         catch (Exception e) {
             System.err.println( "Exception while adding guests: " + e );
             e.printStackTrace();

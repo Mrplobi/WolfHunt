@@ -55,23 +55,23 @@ public class Villager extends People
 		if (msg.getContent() == getLocalName())													//On m'accuse, j'accuse en retour
 		{
 			trustyLivingPlayers.remove(msg.getSender().getName());
-			SendAccusation(msg.getSender().getName(), trustyLivingPlayers);
+			SendAccusation(msg.getSender(), trustyLivingPlayers);
 		}
-		else if (behaviour == suiveur)															//Le suiveur se fait convaincre à chaque fois et transmet l'info (une vrai girouette ce suiveur)
+		else if (behaviour == BehaviourType.behaviours.suiveur)															//Le suiveur se fait convaincre à chaque fois et transmet l'info (une vrai girouette ce suiveur)
 		{
-			suspect = msg.getContent();
+			suspect = stringToAID(msg.getContent());
 			SendAccusation(suspect, trustyLivingPlayers);
 		}
-		else if (behaviour = meneur)
+		else if (behaviour == BehaviourType.behaviours.meneur)
 		{
-			if ( !trustyLivingPlayers.contains(msg.getContent()){								//Le meneur était déjà sur cette piste un peu, change donc de suspect et répend la cible
-				suspect = msg.getContent();
+			if ( !trustyLivingPlayers.contains(msg.getContent())){								//Le meneur était déjà sur cette piste un peu, change donc de suspect et répend la cible
+				suspect = stringToAID(msg.getContent());
 				SendAccusation(suspect, trustyLivingPlayers);
 			}
 			else if(randInt(0, 9) < 2)															//Le meneur est convaincu, change de cible et transmet
 			{
 				trustyLivingPlayers.remove(msg.getContent());
-				suspect = msg.getContent();
+				suspect = stringToAID(msg.getContent());
 				SendAccusation(suspect, trustyLivingPlayers);
 			}
 			else{																				//Le meneur n'est pas convaincu, il répend donc sa théorie et pas celle qui lui arrive

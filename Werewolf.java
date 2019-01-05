@@ -20,8 +20,8 @@ import java.text.NumberFormat;
 
 public class Werewolf extends People
 {
-	private ArrayList werewolfs;
-	private ArrayList nonWolf;
+	private ArrayList<AID> werewolfs;
+	private ArrayList<AID> nonWolf;
 	
 	protected void setup()
 	{
@@ -57,20 +57,20 @@ public class Werewolf extends People
 	@Override
 	protected void WerewolfTimeAction(ACLMessage msg){
 		if (suspect == null){
-			suspect = nonWolf[randInt(0, nonWolf.size()];
+			suspect = nonWolf.get(randInt(0, nonWolf.size()));
 		}
 		if(nonWolf.contains(msg.getContent())){
-			if (behaviour == suiveur)																//Le suiveur se fait convaincre à chaque fois et transmet l'info (une vrai girouette ce suiveur)
+			if (behaviour == BehaviourType.behaviours.suiveur)																//Le suiveur se fait convaincre à chaque fois et transmet l'info (une vrai girouette ce suiveur)
 			{
-				suspect = msg.getContent();
+				suspect = stringToAID(msg.getContent());
 				SendAccusation(suspect, werewolfs);
 			}
-			else if (behaviour = meneur)
+			else if (behaviour == BehaviourType.behaviours.meneur)
 			{
 				if(randInt(0, 9) < 2)																//Le meneur est convaincu, change de cible et transmet
 				{
 					trustyLivingPlayers.remove(msg.getContent());
-					suspect = msg.getContent();
+					suspect = stringToAID(msg.getContent());
 					SendAccusation(suspect, werewolfs);
 				}
 				else{																				//Le meneur n'est pas convaincu, il répend donc sa théorie et pas celle qui lui arrive
@@ -85,23 +85,23 @@ public class Werewolf extends People
 		if (msg.getContent() == getLocalName() || werewolfs.contains(msg.getContent()))				//On m'accuse moi ou mes potos, j'accuse en retour
 		{
 			trustyLivingPlayers.remove(msg.getSender().getName());
-			SendAccusation(msg.getSender().getName(), trustyLivingPlayers);
+			SendAccusation(msg.getSender(), trustyLivingPlayers);
 		}
-		else if (behaviour == suiveur)																//Le suiveur se fait convaincre à chaque fois et transmet l'info (une vrai girouette ce suiveur)
+		else if (behaviour == BehaviourType.behaviours.suiveur)																//Le suiveur se fait convaincre à chaque fois et transmet l'info (une vrai girouette ce suiveur)
 		{
-			suspect = msg.getContent();
+			suspect = stringToAID(msg.getContent());
 			SendAccusation(suspect, trustyLivingPlayers);
 		}
-		else if (behaviour = meneur)
+		else if (behaviour == BehaviourType.behaviours.meneur)
 		{
-			if ( !trustyLivingPlayers.contains(msg.getContent()){									//Le meneur était déjà sur cette piste un peu, change donc de suspect et répend la cible
-				suspect = msg.getContent();
+			if ( !trustyLivingPlayers.contains(msg.getContent())){									//Le meneur était déjà sur cette piste un peu, change donc de suspect et répend la cible
+				suspect = stringToAID(msg.getContent());
 				SendAccusation(suspect, trustyLivingPlayers);
 			}
 			else if(randInt(0, 9) < 2)																//Le meneur est convaincu, change de cible et transmet
 			{
 				trustyLivingPlayers.remove(msg.getContent());
-				suspect = msg.getContent();
+				suspect = stringToAID(msg.getContent());
 				SendAccusation(suspect, trustyLivingPlayers);
 			}
 			else{																					//Le meneur n'est pas convaincu, il répend donc sa théorie et pas celle qui lui arrive
