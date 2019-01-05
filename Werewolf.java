@@ -20,11 +20,15 @@ import java.text.NumberFormat;
 
 public class Werewolf extends People
 {
-  protected void setup()
-  {
-	  MJ=new AID( "MJ", AID.ISLOCALNAME );
+	private ArrayList werewolfs;
+	private ArrayList nonWolf;
+	
+	protected void setup()
+	{
+		werewolfs = new ArrayList();
+		MJ=new AID( "MJ", AID.ISLOCALNAME );
 
-	  // create the agent descrption of itself
+		// create the agent descrption of itself
 		try
 		{			
 		ServiceDescription sd = new ServiceDescription();
@@ -47,6 +51,62 @@ public class Werewolf extends People
 		{
 			e.printStackTrace();
 		}
-	super.setup();
-  }
+		super.setup();
+	}
+
+	@Override
+	protected void WerewolfTimeAction(ACLMessage msg){
+		if (suspect == null){
+			suspect = nonWolf[randInt(0, nonWolf.size()];
+		}
+		if(nonWolf.contains(msg.getContent())){
+			if (behaviour == suiveur)																//Le suiveur se fait convaincre à chaque fois et transmet l'info (une vrai girouette ce suiveur)
+			{
+				suspect = msg.getContent();
+				SendAccusation(suspect, werewolfs);
+			}
+			else if (behaviour = meneur)
+			{
+				if(randInt(0, 9) < 2)																//Le meneur est convaincu, change de cible et transmet
+				{
+					trustyLivingPlayers.remove(msg.getContent());
+					suspect = msg.getContent();
+					SendAccusation(suspect, werewolfs);
+				}
+				else{																				//Le meneur n'est pas convaincu, il répend donc sa théorie et pas celle qui lui arrive
+					SendAccusation(suspect, werewolfs);
+				}
+			}				
+		}
+	}
+	
+	@Override
+	protected void VoteTimeAction(ACLMessage msg){		
+		if (msg.getContent() == getLocalName() || werewolfs.contains(msg.getContent()))				//On m'accuse moi ou mes potos, j'accuse en retour
+		{
+			trustyLivingPlayers.remove(msg.getSender().getName());
+			SendAccusation(msg.getSender().getName(), trustyLivingPlayers);
+		}
+		else if (behaviour == suiveur)																//Le suiveur se fait convaincre à chaque fois et transmet l'info (une vrai girouette ce suiveur)
+		{
+			suspect = msg.getContent();
+			SendAccusation(suspect, trustyLivingPlayers);
+		}
+		else if (behaviour = meneur)
+		{
+			if ( !trustyLivingPlayers.contains(msg.getContent()){									//Le meneur était déjà sur cette piste un peu, change donc de suspect et répend la cible
+				suspect = msg.getContent();
+				SendAccusation(suspect, trustyLivingPlayers);
+			}
+			else if(randInt(0, 9) < 2)																//Le meneur est convaincu, change de cible et transmet
+			{
+				trustyLivingPlayers.remove(msg.getContent());
+				suspect = msg.getContent();
+				SendAccusation(suspect, trustyLivingPlayers);
+			}
+			else{																					//Le meneur n'est pas convaincu, il répend donc sa théorie et pas celle qui lui arrive
+				SendAccusation(suspect, trustyLivingPlayers);
+			}
+		}
+	}
 }
