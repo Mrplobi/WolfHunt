@@ -299,7 +299,9 @@ import java.text.NumberFormat;
 										saidStfu = false;
 										playersNumber--; //this guy died
 										
-										
+										currentState = currentState.next();
+										System.out.println("Since everybody acked let's do " + currentState);
+										sendState();
 										//=== dying part
 										System.out.println("Notifying everyone player died");
 										for (Iterator i = players.iterator();  i.hasNext();  ) 
@@ -377,9 +379,7 @@ import java.text.NumberFormat;
 											System.out.println("Victoire des Villageois!");
 										}
 										
-										currentState = currentState.next();
-										System.out.println("Since everybody acked let's do " + currentState);
-										sendState();
+									
 									}
 
 									
