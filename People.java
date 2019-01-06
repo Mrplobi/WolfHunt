@@ -95,6 +95,7 @@ public static int randInt(int min, int max) {
 						}
 						else if (msg.getContent().startsWith( MJAgent.NIGHTTIME )) 
 						{
+								// thread to sleep for 1000 milliseconds
 							currentState = State.NIGHTTIME;
 							System.out.println("Me "+ getLocalName() + " be sleepy");
 							awake=false;
@@ -129,7 +130,7 @@ public static int randInt(int min, int max) {
 							WerewolfTimeAction(msg,true); //avec jumpStart
 							
 						}
-						else if (msg.getContent().startsWith(MJAgent.DAYTIME)) //On réveille les loups
+						else if (msg.getContent().startsWith(MJAgent.DAYTIME)) //On réveille tout le monde
 						{
 							currentState = State.DAYTIME;	
 						}
@@ -168,6 +169,7 @@ public static int randInt(int min, int max) {
 						}						
 						else if (msg.getContent().startsWith(MJAgent.VOTETIME))
 						{
+							
 							currentState = State.VOTETIME;
 							
 								//pick player au hasard et start spread rumeur
@@ -256,7 +258,7 @@ public static int randInt(int min, int max) {
 		{
 			try {
 				// thread to sleep for 1000 milliseconds
-				Thread.sleep(100);
+				Thread.sleep(1000);
 				} catch (Exception e) {
 				System.out.println(e);
 				}
@@ -286,6 +288,7 @@ public static int randInt(int min, int max) {
 		}
 		catch(Exception code)
 		{
+			System.out.println("Decode discarded");
 			return null;
 		}
 	}
