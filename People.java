@@ -121,7 +121,7 @@ public static int randInt(int min, int max) {
 							}
 							ack(msg);
 						}
-						else if (msg.getContent().startsWith(MJAgent.WAKEWEREWOLVES)) //On réveille les loups, et tout le monde ack
+						else if (msg.getContent().startsWith(MJAgent.WAKEWEREWOLVES)) //On réveille les loups
 						{
 							currentState = State.WEREWOLF;
 							WerewolfTimeAction(msg,true); //avec jumpStart

@@ -47,7 +47,7 @@ import java.text.NumberFormat;
 
 	public static int nWerewolves = 3;
 	public static int nVillagers = 6;
-	public static int nLittlegirl = 1;
+	public static int nLittleGirl = 1;
     public static final String HELLOWEREWOLF = "MEBEWEREWOLF";
     public static final String HELLOVILLAGER = "MEBEPOORVILLAGER";
 	public static final String HELLOLITTLEGIRL = "MEBEPOORLITTLEGIRL";
@@ -262,7 +262,7 @@ import java.text.NumberFormat;
                 // keep the guest's ID on a local list
                 players.add( new AID(localName, AID.ISLOCALNAME) );
             }
-			for (int i = 0; i < nLittlegirl; i++) {
+			for (int i = 0; i < nLittleGirl; i++) {
 				//create new agent
 				String localName = "playerLittleGirl"+i;
 				System.out.println("little girl created");
