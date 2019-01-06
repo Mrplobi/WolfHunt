@@ -151,6 +151,7 @@ import java.text.NumberFormat;
 											if(value > max)
 											{
 												deadGuy = key;
+												max=value;
 											}
 										}
 										voteReceivedMap.clear();
@@ -172,8 +173,71 @@ import java.text.NumberFormat;
 										}
 										//Retire player de la liste
 										players.remove(deadGuy);
-										//TODO check victory condition
 										
+										//verified count
+										ServiceDescription sd = new ServiceDescription();
+										sd.setType( "WerewolfPlayer" );
+										sd.setName( "Werewolf" );
+										DFAgentDescription dfd = new DFAgentDescription();
+										dfd.addServices( sd );
+										try
+										{
+											DFAgentDescription[] result = DFService.search(myAgent, dfd);
+											nWerewolves=result.length;
+											
+											 for (int i = 0; i < result.length; ++i) 
+											{
+												if (result[i].getName().equals(deadGuy))
+												{    
+													System.out.println("Werewolf late to die");
+													nWerewolves--;  
+												}
+											}
+											
+ //TODO check victory condition
+										}
+										catch (Exception e)
+										{
+											System.out.println("An error occured while counting werewolves");
+										}
+										//Checking little grill
+										sd = new ServiceDescription();
+										sd.setType( "WerewolfPlayer" );
+										sd.setName( "LittleGirl" );
+										dfd = new DFAgentDescription();
+										dfd.addServices( sd );
+										try
+										{
+											DFAgentDescription[] result = DFService.search(myAgent, dfd);
+											nLittleGirl=result.length;
+											
+											 for (int i = 0; i < result.length; ++i) 
+											{
+												if (result[i].getName().equals(deadGuy))
+												{    
+													System.out.println("LittleGirl late to die");
+													nLittleGirl--;  
+												}
+											}
+											
+ //TODO check victory condition
+										}
+										catch (Exception e)
+										{
+											System.out.println("An error occured while counting little grill");
+										}
+										//Villagerleft
+										nVillagers=players.size() - nLittleGirl - nWerewolves;
+										
+										System.out.println("Il reste " + nWerewolves + "loup(s) garou(s), " + nVillagers + " villageois et "+ nLittleGirl + "petite(s) fille(s)");
+										if(nVillagers+nLittleGirl==0)
+										{
+											System.out.println("Victoire des loups garous!");
+										}
+										if(nWerewolves==0)
+										{
+											System.out.println("Victoire des Villageois!");
+										}
 									}
 
                                     if (HELLOWEREWOLF.equals(msg.getContent())) 
