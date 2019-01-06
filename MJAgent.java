@@ -102,8 +102,6 @@ import java.text.NumberFormat;
             // add a Behaviour to handle messages from guests
             addBehaviour( new CyclicBehaviour( this ) {
                             public void action() {
-								
-																		
 								if(currentState==State.WEREWOLF && System.currentTimeMillis()>startVote+durationVote && !saidStfu)
 								{
 									saidStfu=true;

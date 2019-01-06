@@ -158,9 +158,7 @@ public static int randInt(int min, int max) {
 								ack(msg);
 								
 								awake = true;
-								
 						}
-
 						else if(msg.getContent().startsWith(MJAgent.STFU)) //On arrête de discuter sur ordre du grand et beau MJ
 						{
 							awake=false;//On s'endort et on caste les votes
