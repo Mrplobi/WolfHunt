@@ -111,6 +111,7 @@ public class Werewolf extends People
 		}
 
 		if (littleGirl != null && MJAgent.nLittleGirl != 0){	//I know the little girl, she MUST die
+			System.out.println("Got someone really tasty");
 			SendAccusation(littleGirl, werewolfs);
 		}
 		else{

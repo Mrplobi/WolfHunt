@@ -123,7 +123,7 @@ import java.text.NumberFormat;
 
                                 if (msg != null) {
 									
-									if(listenningToVote && voteReceived<players.size() && players.contains(People.stringToAID(msg.getContent())))//TODO: modify whith just alive ones
+									if(listenningToVote && voteReceived<playersNumber && players.contains(People.stringToAID(msg.getContent())))//TODO: modify whith just alive ones
 									{
 										System.out.println(msg.getSender().getLocalName() + "a voté " + People.stringToAID(msg.getContent()).getLocalName() );
 										if(voteReceivedMap.get(People.stringToAID(msg.getContent()))==null)
@@ -155,6 +155,25 @@ import java.text.NumberFormat;
 										}
 										voteReceivedMap.clear();
 										System.out.println(deadGuy.getLocalName() + "VA MOURIR! MWAHAHHAHA");
+										
+										currentState = currentState.next();
+										playersNumber--; //this guy died
+										
+										System.out.println("Since everybody acked let's do " + currentState);
+										sendState();
+										//=== dying part
+										System.out.println("Notifying everyone player died");
+										for (Iterator i = players.iterator();  i.hasNext();  ) 
+										{
+											ACLMessage msgSent = new ACLMessage( ACLMessage.INFORM );
+											msgSent.setContent( deadGuy.toString() );
+											msgSent.addReceiver( (AID) i.next() );	
+											send(msgSent);
+										}
+										//Retire player de la liste
+										players.remove(deadGuy);
+										//TODO check victory condition
+										
 									}
 
                                     if (HELLOWEREWOLF.equals(msg.getContent())) 
@@ -187,6 +206,7 @@ import java.text.NumberFormat;
 										gameStarted = true;
 										currentState=State.NIGHTTIME;
 										sendState();
+										
                                     }
 									if(acksNumber == players.size())	
 									{
