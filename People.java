@@ -111,7 +111,8 @@ public static int randInt(int min, int max) {
 									{
 										players.add(result[i].getName());
 										if (!result[i].getName().equals( getAID())){		//CHECK THIS
-											otherLivingPlayers.add(result[i].getName());   
+											otherLivingPlayers.add(result[i].getName());
+										//	System.out.println(otherLivingPlayers.size());											
 										}
 									}
 								}
@@ -209,7 +210,8 @@ public static int randInt(int min, int max) {
 						else if (msg.getContent().startsWith(MJAgent.AWAKE)){
 							Detect(msg.getSender());
 						}
-						else if (currentState == State.VOTETIME && players.contains(msg.getContent())){							
+						else if (currentState == State.VOTETIME && players.contains(stringToAID(msg.getContent()))){							
+							System.out.println(getLocalName() + "je devrais en parler!");
 							VoteTimeAction(msg);
 						}
 					}
