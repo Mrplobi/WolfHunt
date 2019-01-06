@@ -52,9 +52,11 @@ public class Villager extends People
   
 	@Override
 	protected void VoteTimeAction(ACLMessage msg){
+		
+		awake=true;
 		if (msg.getContent() == getLocalName())													//On m'accuse, j'accuse en retour
 		{
-			trustyLivingPlayers.remove(msg.getSender());
+			trustyLivingPlayers.remove(People.stringToAID(msg.getContent()));
 			SendAccusation(msg.getSender(), trustyLivingPlayers);
 		}
 		else if (behaviour == BehaviourType.behaviours.suiveur)															//Le suiveur se fait convaincre à chaque fois et transmet l'info (une vrai girouette ce suiveur)
@@ -64,15 +66,13 @@ public class Villager extends People
 		}
 		else if (behaviour == BehaviourType.behaviours.meneur)
 		{
-			
-		System.out.println("urg");
-			if ( !trustyLivingPlayers.contains(msg.getContent())){								//Le meneur était déjà sur cette piste un peu, change donc de suspect et répend la cible
+			if ( !trustyLivingPlayers.contains(People.stringToAID(msg.getContent()))){								//Le meneur était déjà sur cette piste un peu, change donc de suspect et répend la cible
 				suspect = People.stringToAID(msg.getContent());
 				SendAccusation(suspect, trustyLivingPlayers);
 			}
 			else if(randInt(0, 9) < 2)															//Le meneur est convaincu, change de cible et transmet
 			{
-				trustyLivingPlayers.remove(msg.getContent());
+				trustyLivingPlayers.remove(People.stringToAID(msg.getContent()));
 				suspect = People.stringToAID(msg.getContent());
 				SendAccusation(suspect, trustyLivingPlayers);
 			}

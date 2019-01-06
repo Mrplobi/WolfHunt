@@ -147,7 +147,9 @@ public class Werewolf extends People
 	
 	@Override
 	protected void VoteTimeAction(ACLMessage msg){	
-		if (msg.getContent() == getLocalName() || werewolfs.contains(msg.getContent()))				//On m'accuse moi ou mes potos, j'accuse en retour
+	
+		awake=true;
+		if (msg.getContent() == getLocalName() || werewolfs.contains(People.stringToAID(msg.getContent())))				//On m'accuse moi ou mes potos, j'accuse en retour
 		{
 			trustyLivingPlayers.remove(msg.getSender());
 			SendAccusation(msg.getSender(), trustyLivingPlayers);
@@ -159,13 +161,13 @@ public class Werewolf extends People
 		}
 		else if (behaviour == BehaviourType.behaviours.meneur)
 		{
-			if ( !trustyLivingPlayers.contains(msg.getContent())){									//Le meneur était déjà sur cette piste un peu, change donc de suspect et répend la cible
+			if ( !trustyLivingPlayers.contains(People.stringToAID(msg.getContent()))){									//Le meneur était déjà sur cette piste un peu, change donc de suspect et répend la cible
 				suspect = People.stringToAID(msg.getContent());
 				SendAccusation(suspect, trustyLivingPlayers);
 			}
 			else if(randInt(0, 9) < 2)																//Le meneur est convaincu, change de cible et transmet
 			{
-				trustyLivingPlayers.remove(msg.getContent());
+				trustyLivingPlayers.remove(People.stringToAID(msg.getContent()));
 				suspect = People.stringToAID(msg.getContent());
 				SendAccusation(suspect, trustyLivingPlayers);
 			}
@@ -174,4 +176,17 @@ public class Werewolf extends People
 			}
 		}
 	}
+	
+	@Override
+	protected  void removeDead(AID deadGuy)
+	{
+		if(nonWolf.contains(deadGuy))
+		{System.out.println("Me be " + getLocalName() + ". Me ack " + deadGuy.getLocalName() + " died. He was not wolf.");
+		nonWolf.remove(deadGuy);}
+		else if (werewolfs.contains(deadGuy))
+		{System.out.println("Me be " + getLocalName() + ". Me ack " + deadGuy.getLocalName() + " died. He was wolf.");
+		werewolfs.remove(deadGuy);}
+		else
+			System.out.println("Me be " + getLocalName() + ". Me ack " + deadGuy.getLocalName() + " died. He was lel.");
+	};
 }

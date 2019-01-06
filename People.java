@@ -154,7 +154,10 @@ public static int randInt(int min, int max) {
 								System.out.println("RIP "+ stringToAID(msg.getContent()).getLocalName());
 								otherLivingPlayers.remove(stringToAID(msg.getContent()));
 								trustyLivingPlayers.remove(stringToAID(msg.getContent()));
+								removeDead(stringToAID(msg.getContent()));
 								ack(msg);
+								
+								awake = true;
 								
 						}
 
@@ -166,15 +169,23 @@ public static int randInt(int min, int max) {
 						else if (msg.getContent().startsWith(MJAgent.VOTETIME))
 						{
 							currentState = State.VOTETIME;
+							
+								//pick player au hasard et start spread rumeur
+							if (suspect == null || !otherLivingPlayers.contains(suspect))
+							{
+								suspect = otherLivingPlayers.get(randInt(0, otherLivingPlayers.size()-1));
+							}
 							if(behaviour == BehaviourType.behaviours.meneur)
 							{
-								//pick player au hasard et start spread rumeur
-								if (suspect == null || !otherLivingPlayers.contains(suspect))
-								{
-									suspect = otherLivingPlayers.get(randInt(0, otherLivingPlayers.size()-1));
-								}
 								SendAccusation(suspect, otherLivingPlayers);
 							}
+							System.out.println( "---------------------" );
+							if(suspect == null)
+								System.out.println( getLocalName() + "'s suspect : NOBODY !!!!! argh not possible kill meeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee" );
+							else 
+								System.out.println( getLocalName() + "'s suspect :" + suspect.getLocalName() );
+							System.out.println( "---------------------" );
+							
 						}
 						else if (msg.getContent().startsWith(MJAgent.PICKINGGIRL))
 						{		//Little girl is asking if you're awake
@@ -201,7 +212,7 @@ public static int randInt(int min, int max) {
 						else if (msg.getContent().startsWith(MJAgent.AWAKE)){
 							Detect(msg.getSender());
 						}
-						else if (currentState == State.VOTETIME && players.contains(stringToAID(msg.getContent()))){							
+						else if (currentState == State.VOTETIME && players.contains(stringToAID(msg.getContent())) && awake){							
 							System.out.println(getLocalName() + "je devrais en parler!");
 							VoteTimeAction(msg);
 						}
@@ -243,11 +254,18 @@ public static int randInt(int min, int max) {
 	{
 		if(suspect!=null)
 		{
+			try {
+				// thread to sleep for 1000 milliseconds
+				Thread.sleep(100);
+				} catch (Exception e) {
+				System.out.println(e);
+				}
 		System.out.println( getLocalName() + " voted for " + suspect);
 		ACLMessage vote = new ACLMessage( ACLMessage.INFORM );
 		vote.setContent( suspect.toString() );
 		vote.addReceiver( MJ );
 		send(vote);
+		suspect = null;
 		}
 	}
 	
@@ -279,6 +297,8 @@ public static int randInt(int min, int max) {
 	protected void WerewolfTimeAction(ACLMessage msg,boolean jumpStart){
 	
 	}
+	
+	protected  void removeDead(AID deadGuy){};
 
     // Internal implementation methods
     //////////////////////////////////

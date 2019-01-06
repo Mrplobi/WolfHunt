@@ -84,7 +84,10 @@ public class LittleGirl extends People
 	}
   
 	@Override
-	protected void VoteTimeAction(ACLMessage msg){		
+	protected void VoteTimeAction(ACLMessage msg){	
+
+		awake=true;
+	
 		if (filthyWolfs.size() != 0){
 			SendAccusation(filthyWolfs.get(0), trustyLivingPlayers);
 		}
@@ -100,13 +103,13 @@ public class LittleGirl extends People
 		}
 		else if (behaviour == BehaviourType.behaviours.meneur)
 		{
-			if ( !trustyLivingPlayers.contains(msg.getContent())){						//Le meneur était déjà sur cette piste un peu, change donc de suspect et répend la cible
+			if ( !trustyLivingPlayers.contains(People.stringToAID(msg.getContent()))){						//Le meneur était déjà sur cette piste un peu, change donc de suspect et répend la cible
 				suspect = People.stringToAID(msg.getContent());
 				SendAccusation(suspect, trustyLivingPlayers);
 			}
 			else if(randInt(0, 9) < 2)													//Le meneur est convaincu, change de cible et transmet
 			{
-				trustyLivingPlayers.remove(msg.getContent());
+				trustyLivingPlayers.remove(People.stringToAID(msg.getContent()));
 				suspect = People.stringToAID(msg.getContent());
 				SendAccusation(suspect, trustyLivingPlayers);
 			}
@@ -114,5 +117,12 @@ public class LittleGirl extends People
 				SendAccusation(suspect, trustyLivingPlayers);
 			}
 		}
+		
+		System.out.println("/////////////////");
+		if (suspect == null)
+			System.out.println("Little Girl Suspect : NOBODY");
+		else
+			System.out.println("Little Girl Suspect : " + suspect.getName());
+		System.out.println("/////////////////");
 	}
 }
