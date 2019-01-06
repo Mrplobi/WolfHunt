@@ -1,7 +1,7 @@
 package WolfHunt;
 public enum State 
 {
-	NIGHTTIME,WEREWOLF,DAYTIME,VOTETIME;
+	NIGHTTIME,WEREWOLF,DAYTIME,VOTETIME,DEATHTIME;
 	private static State[] vals = values();
     public State next()
     {
