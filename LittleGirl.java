@@ -56,9 +56,30 @@ public class LittleGirl extends People
 	}
 	
 	@Override
+
+	protected void Detect(AID primeSuspect)
+	{
+		if (!filthyWolfs.contains(primeSuspect))
+		{
+			filthyWolfs.add(primeSuspect);
+			if (trustyLivingPlayers.contains(primeSuspect))
+			{
+				trustyLivingPlayers.remove(primeSuspect);
+			}
+		}
+	}
+	
+	@Override
 	protected void WerewolfTimeAction(ACLMessage msg,boolean jumpStart){
-		if (picked == false){
-			
+		if (picked == false && filthyWolfs.size() < MJAgent.nWerewolves){
+			for (Iterator i = otherLivingPlayers.iterator();  i.hasNext();  ) 
+			{
+				ACLMessage picking = new ACLMessage( ACLMessage.INFORM );
+				picking.setContent( MJAgent.PICKINGGIRL );
+				picking.addReceiver( (AID) i.next() );
+				send(picking);
+				System.out.println("Little girls : Hey! " + i.next() + " U asleep?");
+			}
 		}
 	}
   
@@ -70,10 +91,10 @@ public class LittleGirl extends People
 		}
 		else if (msg.getContent() == getLocalName())									//On m'accuse, j'accuse en retour
 		{
-			trustyLivingPlayers.remove(msg.getSender().getName());
+			trustyLivingPlayers.remove(msg.getSender());
 			SendAccusation(msg.getSender(), trustyLivingPlayers);
 		}
-		else if (behaviour == BehaviourType.behaviours.suiveur)													//Le suiveur se fait convaincre à chaque fois et transmet l'info (une vrai girouette ce suiveur)
+		else if (behaviour == BehaviourType.behaviours.suiveur)							//Le suiveur se fait convaincre à chaque fois et transmet l'info (une vrai girouette ce suiveur)
 		{
 			suspect = People.stringToAID(msg.getContent());
 			SendAccusation(suspect, trustyLivingPlayers);

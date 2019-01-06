@@ -45,6 +45,9 @@ import java.text.NumberFormat;
 	protected AID deadGuy=null;
     protected boolean gameStarted = false;
 
+	public static int nWerewolves = 3;
+	public static int nVillagers = 6;
+	public static int nLittlegirl = 1;
     public static final String HELLOWEREWOLF = "MEBEWEREWOLF";
     public static final String HELLOVILLAGER = "MEBEPOORVILLAGER";
 	public static final String HELLOLITTLEGIRL = "MEBEPOORLITTLEGIRL";
@@ -55,6 +58,8 @@ import java.text.NumberFormat;
 	public static final String DAYTIME= "Day";
 	public static final String VOTETIME= "vote";
 	public static final String WAKEWEREWOLVES= "WakeWerewolves";
+	public static final String PICKINGGIRL = "Uawake?";
+	public static final String AWAKE = "FULLYAWAKEBB";
 	public HashMap<State, String> messageToSend;
 	public HashMap<AID, Integer> voteReceivedMap;
 	public State currentState = State.NIGHTTIME;
@@ -173,8 +178,7 @@ import java.text.NumberFormat;
 									else if(ACK.equals(msg.getContent())) 
 									{
                                         // a ack was received
-                                        acksNumber++;
-										
+                                        acksNumber++;										
 									}
                                     if ( playersNumber == players.size() && !gameStarted) 
 									{
@@ -224,9 +228,7 @@ import java.text.NumberFormat;
      */
     protected void startGame()
 	{
-		int nWerewolves = 3;
-		int nVillagers = 6;
-		int nLittlegirl = 1;
+		
         // remove any old state
         players.clear();
         playersNumber = 0;

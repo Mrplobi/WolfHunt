@@ -48,22 +48,10 @@ public class People
  * @see java.util.Random#nextInt(int)
  */
 public static int randInt(int min, int max) {
-
-    // NOTE: This will (intentionally) not run as written so that folks
-    // copy-pasting have to think about how to initialize their
-    // Random instance.  Initialization of the Random instance is outside
-    // the main scope of the question, but some decent options are to have
-    // a field that is initialized once and then re-used as needed or to
-    // use ThreadLocalRandom (if using at least Java 1.7).
-    // 
-    // In particular, do NOT do 'Random rand = new Random()' here or you
-    // will get not very good / not very random results.
     if(rand==null)
 	{
 		rand = new Random();
 	}
-    // nextInt is normally exclusive of the top value,
-    // so add 1 to make it inclusive
     int randomNum = rand.nextInt((max - min) + 1) + min;
 
     return randomNum;
@@ -91,92 +79,122 @@ public static int randInt(int min, int max) {
 				System.out.println(getLocalName() +" est un suiveur");
 				behaviour = BehaviourType.behaviours.suiveur;
 			}
-						//=============== 
             // add a Behaviour to process incoming messages
             addBehaviour( new CyclicBehaviour( this ) 
 			{
-                            public void action() {
-                                // listen if a greetings message arrives
-                                ACLMessage msg = receive( MessageTemplate.MatchPerformative( ACLMessage.INFORM ) );
+				public void action() {
+					// listen if a greetings message arrives
+					ACLMessage msg = receive( MessageTemplate.MatchPerformative( ACLMessage.INFORM ) );
 
-                                if (msg != null) {
-                                    if (MJAgent.GOODBYE.equals( msg.getContent() )) 
+					if (msg != null) 
+					{
+						if (MJAgent.GOODBYE.equals( msg.getContent() )) 
+						{
+							// time to go
+							leaveParty();
+						}
+						else if (msg.getContent().startsWith( MJAgent.NIGHTTIME )) 
+						{
+							currentState = State.NIGHTTIME;
+							System.out.println("Me "+ getLocalName() + " be sleepy");
+							awake=false;
+							if(players.size() == 0)//La première fois que tout le monde arrive on récupère les autres joueurs
+							{
+								try	
+								{
+									ServiceDescription sd = new ServiceDescription();
+									sd.setType( "WerewolfPlayer" );
+									DFAgentDescription dfd = new DFAgentDescription();
+									dfd.addServices( sd );
+									DFAgentDescription[] result = DFService.search(myAgent, dfd);
+									for (int i = 0; i < result.length; ++i) 
 									{
-                                        // time to go
-                                        leaveParty();
-                                    }
-                                    else if (msg.getContent().startsWith( MJAgent.NIGHTTIME )) 
-									{
-										currentState = State.NIGHTTIME;
-										System.out.println("Me "+ getLocalName() + " be sleepy");
-										awake=false;
-                                        if(players.size() == 0)//La première fois que tout le monde arrive on récupère les autres joueurs
-										{
-											try	
-											{
-												ServiceDescription sd = new ServiceDescription();
-												sd.setType( "WerewolfPlayer" );
-												DFAgentDescription dfd = new DFAgentDescription();
-												dfd.addServices( sd );
-
-												DFAgentDescription[] result = DFService.search(myAgent, dfd);
-												for (int i = 0; i < result.length; ++i) 
-												{
-													players.add(result[i].getName());
-													if (!result[i].getName().equals( getAID())){		//CHECK THIS
-														otherLivingPlayers.add(result[i].getName());   
-													}
-												}
-												System.out.println(players.size());
-												System.out.println(otherLivingPlayers.size());
-											}
-											catch(FIPAException fe) {
-												fe.printStackTrace();
-											}
-									// Perform the request
-										}
-										ack(msg);
-									}
-									else if (msg.getContent().startsWith(MJAgent.VOTETIME))
-									{
-										currentState = State.VOTETIME;
-										if(behaviour == BehaviourType.behaviours.meneur)
-										{
-											//pick player au hasard et start spread rumeur
-											if (suspect == null)
-											{
-												suspect = otherLivingPlayers.get(randInt(0, 9));
-											}
-											SendAccusation(suspect, otherLivingPlayers);
+										players.add(result[i].getName());
+										if (!result[i].getName().equals( getAID())){		//CHECK THIS
+											otherLivingPlayers.add(result[i].getName());   
 										}
 									}
-									else if (msg.getContent().startsWith(MJAgent.WAKEWEREWOLVES))
-									{
-										currentState = State.WEREWOLF;
-										WerewolfTimeAction(msg,true);
-										
-									}
-									else if (currentState == State.WEREWOLF && players.contains(stringToAID(msg.getContent())) && awake ){
-										
-										WerewolfTimeAction(msg,false);
-									}
-									else if(msg.getContent().startsWith(MJAgent.STFU))
-									{
-										awake=false;//On s'endort et on caste les votes
-										CastVote();
-									}
-									else if (currentState == State.VOTETIME && players.contains(stringToAID(msg.getContent()))){
+								}
+								catch(FIPAException fe) {
+									fe.printStackTrace();
+								}
+							}
+							ack(msg);
+						}
+						else if (msg.getContent().startsWith(MJAgent.WAKEWEREWOLVES)) //On réveille les loups, et tout le monde ack
+						{
+							currentState = State.WEREWOLF;
+							WerewolfTimeAction(msg,true); //avec jumpStart
+							
+						}
+						else if (currentState == State.WEREWOLF && players.contains(stringToAID(msg.getContent())) && awake )
+						{
+								WerewolfTimeAction(msg,false);
+									
+						}
+						else if(msg.getContent().startsWith(MJAgent.STFU)) //On arrête de discuter sur ordre du grand et beau MJ
+						{
+							awake=false;//On s'endort et on caste les votes
+							CastVote();
+						}
+								/*	else if (currentState == State.VOTETIME && players.contains(stringToAID(msg.getContent()))){
 										
 										VoteTimeAction(msg);
-									}
+									}*/
 
+									//System.out.println(players.size());
+									//System.out.println(otherLivingPlayers.size());
+							
+							//ack(msg); REMETTRE AU BON ENDROIT
+						
+						else if (msg.getContent().startsWith(MJAgent.VOTETIME))
+						{
+							currentState = State.VOTETIME;
+							if(behaviour == BehaviourType.behaviours.meneur)
+							{
+								//pick player au hasard et start spread rumeur
+								if (suspect == null || !otherLivingPlayers.contains(suspect))
+								{
+									suspect = otherLivingPlayers.get(randInt(0, 9));
 								}
-                                else {
-                                    // if no message is arrived, block the behaviour
-                                    block();
-                                }
-                            }
-                        } );
+								SendAccusation(suspect, otherLivingPlayers);
+							}
+						}
+						else if (msg.getContent().startsWith(MJAgent.PICKINGGIRL))
+						{		//Little girl is asking if you're awake
+							
+							if (awake == true){		//only werewolfs
+								
+								if (randInt(0, 9) < 5){			//You didn't lie, for some reason
+									ACLMessage answer = new ACLMessage( ACLMessage.INFORM );
+									answer.addReceiver( msg.getSender() );
+									answer.setContent(MJAgent.AWAKE);
+									send(answer);
+									System.out.println(getLocalName() + " : Nah, just killing some dudz");
+								}
+								else		//You lied, that's dirty!
+								{
+									System.out.println(getLocalName() + " : ......yes?..... /n Little girl : Oh! Sorry. Sleep tight!");
+								}
+								if (randInt(0, 11) < 4){		//You took note of the little girl asking
+									System.out.println(getLocalName() + " : ....ravioli ravioli....");
+									Detect(msg.getSender());
+								}
+							}
+						}
+						else if (msg.getContent().startsWith(MJAgent.AWAKE)){
+							Detect(msg.getSender());
+						}
+						else if (currentState == State.VOTETIME && players.contains(msg.getContent())){							
+							VoteTimeAction(msg);
+						}
+					}
+					else {
+						// if no message is arrived, block the behaviour
+						block();
+					}
+				}
+			} );
         }
         catch (Exception e) {
             System.out.println( "Saw exception in GuestAgent: " + e );
@@ -184,6 +202,11 @@ public static int randInt(int min, int max) {
         }
 
     }
+	
+	protected void Detect(AID primeSuspect)
+	{
+		
+	}
 	
 	//Method sending a message to a random trusted player
 	
@@ -213,14 +236,14 @@ public static int randInt(int min, int max) {
 	
 	protected void ack(ACLMessage msg)
 	{
-			System.out.println( getLocalName() + "said ACK ");
-			ACLMessage msgSent = new ACLMessage( ACLMessage.INFORM );
-			msgSent.setContent( MJAgent.ACK );
-			msgSent.addReceiver( msg.getSender() );
-			send(msgSent);
+		System.out.println( getLocalName() + "said ACK ");
+		ACLMessage msgSent = new ACLMessage( ACLMessage.INFORM );
+		msgSent.setContent( MJAgent.ACK );
+		msgSent.addReceiver( msg.getSender() );
+		send(msgSent);
 	}
 	public static AID stringToAID(String str)
-	{
+{
 		StringACLCodec codec = new StringACLCodec(new StringReader(str), null);
 		try 
 		{
