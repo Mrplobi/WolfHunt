@@ -137,7 +137,7 @@ import java.text.NumberFormat;
 										voteReceived++;
 										
 									}
-									if(listenningToVote && currentState==State.WEREWOLF && voteReceived>=3)//TO MODIFY
+									if(listenningToVote && currentState==State.WEREWOLF && voteReceived>=nWerewolves)//TO MODIFY
 									{
 										listenningToVote=false;
 										voteReceived=0;
