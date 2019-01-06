@@ -62,43 +62,42 @@ public class Werewolf extends People
 		awake=true;
 		if(werewolfs==null)//On remplit les deux listes wold et not wolf
 		{
-
-		 werewolfs=new ArrayList<AID>();
-		 nonWolf=new ArrayList<AID>();
-		ServiceDescription sd = new ServiceDescription();
-		sd.setType( "WerewolfPlayer" );
-		sd.setName( "Werewolf" );
-		DFAgentDescription dfd = new DFAgentDescription();
-		dfd.addServices( sd );
-		try
-		{
-		DFAgentDescription[] result = DFService.search(this, dfd);
-	//	System.out.println("COMPARE "+ getAID()); 
-		for (int i = 0; i < result.length; ++i) 
-		{
-			//players.add(result[i].getName());
-			
-			if (!result[i].getName().equals(getAID())){	
-		//	System.out.println("TO "+result[i].getName());
-			werewolfs.add(result[i].getName());   
-			}
-		}
-		for (int i = 0; i < players.size(); ++i) 
-		{
-			if(!werewolfs.contains(players.get(i)))
+			werewolfs=new ArrayList<AID>();
+			nonWolf=new ArrayList<AID>();
+			ServiceDescription sd = new ServiceDescription();
+			sd.setType( "WerewolfPlayer" );
+			sd.setName( "Werewolf" );
+			DFAgentDescription dfd = new DFAgentDescription();
+			dfd.addServices( sd );
+			try
+			{
+				DFAgentDescription[] result = DFService.search(this, dfd);
+				//	System.out.println("COMPARE "+ getAID()); 
+				for (int i = 0; i < result.length; ++i) 
+				{
+					//players.add(result[i].getName());
 					
 					if (!result[i].getName().equals(getAID())){	
-					//System.out.println("TO "+result[i].getName());
-					nonWolf.add(result[i].getName());   
+				//	System.out.println("TO "+result[i].getName());
+					werewolfs.add(result[i].getName());   
 					}
-		}
-		System.out.println("We detected"+werewolfs.size() + " wolves and " + nonWolf.size() + " nonWolf");
-		}
-		
-		catch(Exception e)
-		{ 
-			System.out.println("an error occured while finding other wolves");
-		}
+				}
+				for (int i = 0; i < players.size(); ++i) 
+				{
+					if(!werewolfs.contains(players.get(i)))
+					{							
+						if (!result[i].getName().equals(getAID())){	
+							//System.out.println("TO "+result[i].getName());
+							nonWolf.add(result[i].getName());   
+						}
+					}
+				}
+				System.out.println("We detected"+werewolfs.size() + " wolves and " + nonWolf.size() + " nonWolf");
+			}		
+			catch(Exception e)
+			{ 
+				System.out.println("an error occured while finding other wolves");
+			}
 		}
 			
 		if (suspect == null || !otherLivingPlayers.contains(suspect)){
