@@ -88,8 +88,8 @@ public class Werewolf extends People
 			if(!werewolfs.contains(players.get(i)))
 					
 					if (!result[i].getName().equals(getAID())){	
-					System.out.println("TO "+result[i].getName());
-					werewolfs.add(result[i].getName());   
+					//System.out.println("TO "+result[i].getName());
+					nonWolf.add(result[i].getName());   
 					}
 		}
 		System.out.println("We detected"+werewolfs.size() + " wolves and " + nonWolf.size() + " nonWolf");
@@ -98,6 +98,7 @@ public class Werewolf extends People
 		catch(Exception e)
 		{ 
 			System.out.println("an error occured while finding other wolves");
+		}
 		}
 			
 		if (suspect == null || !otherLivingPlayers.contains(suspect)){
@@ -111,7 +112,7 @@ public class Werewolf extends People
 			}
 		}
 
-		if (primeSuspect != null && nLittleGirl != 0){	//I know the little girl, she MUST die
+		if (littleGirl != null && MJAgent.nLittleGirl != 0){	//I know the little girl, she MUST die
 			SendAccusation(littleGirl, werewolfs);
 		}
 		else{
