@@ -111,7 +111,7 @@ public class Werewolf extends People
 			}
 		}
 
-		if (primeSuspect != null && nLittleGirl != 0){	//I know the little girl, she MUST die
+		if (littleGirl != null && MJAgent.nLittleGirl != 0){	//I know the little girl, she MUST die
 			SendAccusation(littleGirl, werewolfs);
 		}
 		else{

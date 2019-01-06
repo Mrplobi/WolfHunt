@@ -72,13 +72,13 @@ public class LittleGirl extends People
 	@Override
 	protected void WerewolfTimeAction(ACLMessage msg,boolean jumpStart){
 		if (picked == false && filthyWolfs.size() < MJAgent.nWerewolves){
-			for (Iterator i = otherLivingPlayers.iterator();  i.hasNext();  ) 
+			for (int i = 0; i < otherLivingPlayers.size();  i++  ) 
 			{
 				ACLMessage picking = new ACLMessage( ACLMessage.INFORM );
 				picking.setContent( MJAgent.PICKINGGIRL );
-				picking.addReceiver( (AID) i.next() );
+				picking.addReceiver( otherLivingPlayers.get(i) );
 				send(picking);
-				System.out.println("Little girls : Hey! " + i.next() + " U asleep?");
+				System.out.println("Little girls : Hey! " + otherLivingPlayers.get(i) + " U asleep?");
 			}
 		}
 	}
