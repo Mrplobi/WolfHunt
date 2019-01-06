@@ -192,7 +192,7 @@ public static int randInt(int min, int max) {
 								{
 									System.out.println(getLocalName() + " : ......yes?..... /n Little girl : Oh! Sorry. Sleep tight!");
 								}
-								if (randInt(0, 11) < 4){		//You took note of the little girl asking
+								if (randInt(0, 9) < 1){		//You took note of the little girl asking
 									System.out.println(getLocalName() + " : ....ravioli ravioli....");
 									Detect(msg.getSender());
 								}
