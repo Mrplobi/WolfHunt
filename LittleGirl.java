@@ -78,7 +78,7 @@ public class LittleGirl extends People
 				picking.setContent( MJAgent.PICKINGGIRL );
 				picking.addReceiver( otherLivingPlayers.get(i) );
 				send(picking);
-				System.out.println("Little girls : Hey! " + otherLivingPlayers.get(i) + " U asleep?");
+				System.out.println("Little girls : Hey! " + otherLivingPlayers.get(i).getName() + " U asleep?");
 			}
 		}
 	}

@@ -111,7 +111,8 @@ public static int randInt(int min, int max) {
 									{
 										players.add(result[i].getName());
 										if (!result[i].getName().equals( getAID())){		//CHECK THIS
-											otherLivingPlayers.add(result[i].getName());   
+											otherLivingPlayers.add(result[i].getName());
+										//	System.out.println(otherLivingPlayers.size());											
 										}
 									}
 								}
@@ -127,11 +128,35 @@ public static int randInt(int min, int max) {
 							WerewolfTimeAction(msg,true); //avec jumpStart
 							
 						}
+						else if (msg.getContent().startsWith(MJAgent.DAYTIME)) //On réveille les loups
+						{
+							currentState = State.DAYTIME;	
+						}
 						else if (currentState == State.WEREWOLF && players.contains(stringToAID(msg.getContent())) && awake )
 						{
 								WerewolfTimeAction(msg,false);
 									
 						}
+						else if (currentState == State.DAYTIME && getAID().equals((stringToAID(msg.getContent()))) )//If it us who died
+						{
+							System.out.println("I died lel");
+							try{
+								doDelete();
+							}
+							catch(Exception e)
+							{
+								System.out.println("No man can kill me");
+							}
+						}
+						else if (currentState == State.DAYTIME && otherLivingPlayers.contains(stringToAID(msg.getContent())) )//If it is another player we remove him
+						{
+								System.out.println("RIP "+ stringToAID(msg.getContent()).getLocalName());
+								otherLivingPlayers.remove(stringToAID(msg.getContent()));
+								trustyLivingPlayers.remove(stringToAID(msg.getContent()));
+								ack(msg);
+								
+						}
+
 						else if(msg.getContent().startsWith(MJAgent.STFU)) //On arrête de discuter sur ordre du grand et beau MJ
 						{
 							awake=false;//On s'endort et on caste les votes
@@ -155,7 +180,7 @@ public static int randInt(int min, int max) {
 								//pick player au hasard et start spread rumeur
 								if (suspect == null || !otherLivingPlayers.contains(suspect))
 								{
-									suspect = otherLivingPlayers.get(randInt(0, 9));
+									suspect = otherLivingPlayers.get(randInt(0, otherLivingPlayers.size()-1));
 								}
 								SendAccusation(suspect, otherLivingPlayers);
 							}
@@ -185,7 +210,8 @@ public static int randInt(int min, int max) {
 						else if (msg.getContent().startsWith(MJAgent.AWAKE)){
 							Detect(msg.getSender());
 						}
-						else if (currentState == State.VOTETIME && players.contains(msg.getContent())){							
+						else if (currentState == State.VOTETIME && players.contains(stringToAID(msg.getContent()))){							
+							System.out.println(getLocalName() + "je devrais en parler!");
 							VoteTimeAction(msg);
 						}
 					}
