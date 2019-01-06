@@ -84,8 +84,7 @@ public class LittleGirl extends People
 	}
   
 	@Override
-	protected void VoteTimeAction(ACLMessage msg){
-		
+	protected void VoteTimeAction(ACLMessage msg){		
 		if (filthyWolfs.size() != 0){
 			SendAccusation(filthyWolfs.get(0), trustyLivingPlayers);
 		}

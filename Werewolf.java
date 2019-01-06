@@ -146,7 +146,7 @@ public class Werewolf extends People
 	
 	
 	@Override
-	protected void VoteTimeAction(ACLMessage msg){		
+	protected void VoteTimeAction(ACLMessage msg){	
 		if (msg.getContent() == getLocalName() || werewolfs.contains(msg.getContent()))				//On m'accuse moi ou mes potos, j'accuse en retour
 		{
 			trustyLivingPlayers.remove(msg.getSender());
