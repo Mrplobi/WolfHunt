@@ -138,19 +138,19 @@ import java.text.NumberFormat;
 											listenningToVote = true;
 											voteReceived=0;
 										}
-										/*try {
+										try {
 											// thread to sleep for 1000 milliseconds
-											Thread.sleep(100);
+											Thread.sleep(1000);
 										 } catch (Exception e) {
 											System.out.println(e);
-										 }*/
+										 }
 								}
                                 ACLMessage msg = receive();
 
                                 if (msg != null) {
-									AID victim = People.stringToAID(msg.getContent());
+								//	AID victim = People.stringToAID(msg.getContent());
 									
-									if(listenningToVote && voteReceived<playersNumber && victim != null && players.contains(victim))//TODO: modify whith just alive ones
+									if(listenningToVote && voteReceived<playersNumber &&  players.contains(People.stringToAID(msg.getContent())))//TODO: modify whith just alive ones
 									{
 										System.out.println(msg.getSender().getLocalName() + "a voté " + People.stringToAID(msg.getContent()).getLocalName() );
 										if(voteReceivedMap.get(People.stringToAID(msg.getContent()))==null)
@@ -159,7 +159,8 @@ import java.text.NumberFormat;
 										}
 										else
 										{
-										voteReceivedMap.put(People.stringToAID(msg.getContent()),voteReceivedMap.get(People.stringToAID(msg.getContent()+1)));//increment vote count
+											
+										voteReceivedMap.put(People.stringToAID(msg.getContent()),voteReceivedMap.get(People.stringToAID(msg.getContent()))+1);//increment vote count
 										}
 										voteReceived++;
 										System.out.println(" votesRecieved :" + voteReceived + " players :" + playersNumber );
@@ -184,6 +185,7 @@ import java.text.NumberFormat;
 												max=value;
 											}
 										}
+										System.out.println("Initial map elements: " + voteReceivedMap);
 										voteReceivedMap.clear();
 										System.out.println(deadGuy.getLocalName() + "VA MOURIR! MWAHAHHAHA");
 										
@@ -295,7 +297,9 @@ import java.text.NumberFormat;
 										saidStfu = false;
 										playersNumber--; //this guy died
 										
-										
+										currentState = currentState.next();
+										System.out.println("Since everybody acked let's do " + currentState);
+										sendState();
 										//=== dying part
 										System.out.println("Notifying everyone player died");
 										for (Iterator i = players.iterator();  i.hasNext();  ) 
@@ -373,9 +377,7 @@ import java.text.NumberFormat;
 											System.out.println("Victoire des Villageois!");
 										}
 										
-										currentState = currentState.next();
-										System.out.println("Since everybody acked let's do " + currentState);
-										sendState();
+									
 									}
 
 									
