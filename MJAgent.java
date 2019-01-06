@@ -57,6 +57,7 @@ import java.text.NumberFormat;
 	public static final String NIGHTTIME= "Night";
 	public static final String DAYTIME= "Day";
 	public static final String VOTETIME= "vote";
+	public static final String DEATHTIME= "Death";
 	public static final String WAKEWEREWOLVES= "WakeWerewolves";
 	public static final String PICKINGGIRL = "Uawake?";
 	public static final String AWAKE = "FULLYAWAKEBB";
@@ -71,6 +72,7 @@ import java.text.NumberFormat;
 		messageToSend.put(State.WEREWOLF,WAKEWEREWOLVES);
 		messageToSend.put(State.DAYTIME,DAYTIME);
 		messageToSend.put(State.VOTETIME,VOTETIME);
+		messageToSend.put(State.DEATHTIME, DEATHTIME);
 		voteReceivedMap = new HashMap<AID, Integer> ();
 		}
 	public void sendState()

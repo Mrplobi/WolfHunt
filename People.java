@@ -159,6 +159,30 @@ public static int randInt(int min, int max) {
 								
 								awake = true;
 						}
+						else if(msg.getContent().startsWith(MJAgent.DEATHTIME)) //On arrête de discuter sur ordre du grand et beau MJ
+						{
+							currentState = State.DEATHTIME;
+						}	
+						else if (currentState == State.DEATHTIME && getAID().equals((stringToAID(msg.getContent()))) )//If it us who died
+						{
+							System.out.println("I died lel");
+							try{
+								doDelete();
+							}
+							catch(Exception e)
+							{
+								System.out.println("No man can kill me");
+							}
+						}
+						else if (currentState == State.DEATHTIME && otherLivingPlayers.contains(stringToAID(msg.getContent())) )//If it is another player we remove him
+						{
+								System.out.println("RIP "+ stringToAID(msg.getContent()).getLocalName());
+								otherLivingPlayers.remove(stringToAID(msg.getContent()));
+								trustyLivingPlayers.remove(stringToAID(msg.getContent()));
+								removeDead(stringToAID(msg.getContent()));
+								ack(msg);
+								
+						}
 						else if(msg.getContent().startsWith(MJAgent.STFU)) //On arrête de discuter sur ordre du grand et beau MJ
 						{
 							awake=false;//On s'endort et on caste les votes
