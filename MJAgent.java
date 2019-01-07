@@ -266,10 +266,12 @@ import java.text.NumberFormat;
 										if(nVillagers+nLittleGirl==0)
 										{
 											System.out.println("Victoire des loups garous!");
+											System.exit(0);
 										}
 										if(nWerewolves==0)
 										{
 											System.out.println("Victoire des Villageois!");
+											System.exit(0);
 										}
 									}
 
@@ -371,10 +373,12 @@ import java.text.NumberFormat;
 										if(nVillagers+nLittleGirl==0)
 										{
 											System.out.println("Victoire des loups garous!");
+											System.exit(0);
 										}
 										if(nWerewolves==0)
 										{
 											System.out.println("Victoire des Villageois!");
+											System.exit(0);
 										}
 										
 									
